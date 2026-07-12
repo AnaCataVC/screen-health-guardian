@@ -47,8 +47,9 @@ class AlertOverlay:
         accent_color: str,
     ) -> None:
         """Build and display the overlay window."""
+        from i18n import t
         self.overlay = tk.Toplevel(self.root)
-        self.overlay.title("Work Health Timer Alert")
+        self.overlay.title(t("alert_window_title"))
         self.overlay.overrideredirect(True)
         self.overlay.wm_attributes("-topmost", True)
         self.overlay.wm_attributes("-alpha", 0.0)  # Start invisible for fade-in
@@ -189,6 +190,9 @@ class AlertOverlay:
 
 def show_look_away_alert(
     root: tk.Tk,
+    title: str,
+    message: str,
+    button_text: str,
     auto_dismiss_sec: int = 30,
     sound_enabled: bool = False,
     on_dismiss: callable = None,
@@ -201,9 +205,9 @@ def show_look_away_alert(
     return AlertOverlay(
         root=root,
         emoji="👀",
-        title="Time to Rest Your Eyes",
-        message="Look at something 20 feet (~6 meters) away for 20 seconds.\nYour eyes will thank you!",
-        button_text="✓  Done, eyes rested",
+        title=title,
+        message=message,
+        button_text=button_text,
         accent_color="#4fc3f7",
         auto_dismiss_sec=auto_dismiss_sec,
         sound_enabled=sound_enabled,
@@ -213,6 +217,9 @@ def show_look_away_alert(
 
 def show_posture_alert(
     root: tk.Tk,
+    title: str,
+    message: str,
+    button_text: str,
     auto_dismiss_sec: int = 30,
     sound_enabled: bool = False,
     on_dismiss: callable = None,
@@ -224,9 +231,9 @@ def show_posture_alert(
     return AlertOverlay(
         root=root,
         emoji="🧘",
-        title="Check Your Posture",
-        message="Sit up straight! Shoulders back, feet flat on the floor,\nand screen at eye level.",
-        button_text="✓  Posture corrected",
+        title=title,
+        message=message,
+        button_text=button_text,
         accent_color="#b388ff",
         auto_dismiss_sec=auto_dismiss_sec,
         sound_enabled=sound_enabled,

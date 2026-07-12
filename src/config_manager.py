@@ -7,6 +7,7 @@ Thread-safe and resilient to corrupted config files.
 import json
 import logging
 import threading
+import winreg
 from typing import Any
 
 from constants import (
@@ -16,6 +17,7 @@ from constants import (
     DEFAULT_LOOK_AWAY_INTERVAL_MIN,
     DEFAULT_POSTURE_INTERVAL_MIN,
     DEFAULT_SOUND_ENABLED,
+    DEFAULT_LANGUAGE,
     get_config_path,
 )
 
@@ -37,6 +39,7 @@ class ConfigManager:
         "alert_auto_dismiss_sec": DEFAULT_ALERT_AUTO_DISMISS_SEC,
         "sound_enabled": DEFAULT_SOUND_ENABLED,
         "auto_start": DEFAULT_AUTO_START,
+        "language": DEFAULT_LANGUAGE,
     }
 
     def __init__(self, config_path: str | None = None) -> None:
@@ -74,6 +77,19 @@ class ConfigManager:
                     self._path,
                 )
                 self._data = dict(self._DEFAULTS)
+                
+                # Check if an installation language was set in registry
+                try:
+                    key = winreg.OpenKey(winreg.HKEY_CURRENT_USER, r"Software\WorkHealthTimer", 0, winreg.KEY_READ)
+                    lang, _ = winreg.QueryValueEx(key, "InstallLanguage")
+                    if lang == "spanish":
+                        self._data["language"] = "es"
+                    elif lang == "english":
+                        self._data["language"] = "en"
+                    winreg.CloseKey(key)
+                except FileNotFoundError:
+                    pass
+                
                 self._write()
             except (json.JSONDecodeError, ValueError) as exc:
                 logger.warning(

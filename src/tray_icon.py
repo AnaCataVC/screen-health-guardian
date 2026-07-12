@@ -5,6 +5,8 @@ from typing import Optional, Callable
 import pystray
 from PIL import Image, ImageDraw
 
+from i18n import t
+
 logger = logging.getLogger(__name__)
 
 
@@ -92,8 +94,6 @@ class TrayIcon:
 
     def _build_menu(self) -> pystray.Menu:
         """Build the context menu for the tray icon."""
-        pause_text = '▶  Resume' if self._is_paused else '⏸  Pause'
-
         return pystray.Menu(
             pystray.MenuItem(
                 lambda _: self._get_status(),
@@ -102,17 +102,17 @@ class TrayIcon:
             ),
             pystray.Menu.SEPARATOR,
             pystray.MenuItem(
-                lambda _: '▶  Resume' if self._is_paused else '⏸  Pause',
+                lambda _: t('tray_resume') if self._is_paused else t('tray_pause'),
                 self._handle_pause_resume,
             ),
             pystray.MenuItem(
-                '⚙  Settings',
+                lambda _: t('tray_settings'),
                 self._handle_settings,
                 default=True,
             ),
             pystray.Menu.SEPARATOR,
             pystray.MenuItem(
-                '✕  Quit',
+                lambda _: t('tray_quit'),
                 self._handle_quit,
             ),
         )
@@ -135,7 +135,7 @@ class TrayIcon:
         """Update the icon image and tooltip."""
         if self._icon is not None:
             self._icon.icon = self._create_icon_image()
-            status = 'Paused' if self._is_paused else 'Active'
+            status = t('tray_status_paused') if self._is_paused else t('tray_status_active')
             self._icon.title = f'Work Health Timer — {status}'
             self._icon.menu = self._build_menu()
 
@@ -144,7 +144,7 @@ class TrayIcon:
         self._icon = pystray.Icon(
             name='work_health_timer',
             icon=self._create_icon_image(),
-            title='Work Health Timer — Active',
+            title=f'Work Health Timer — {t("tray_status_active")}',
             menu=self._build_menu(),
         )
 

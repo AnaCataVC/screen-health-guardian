@@ -35,6 +35,7 @@ from config_manager import ConfigManager
 from idle_detector import IdleDetector
 from alert_overlay import show_look_away_alert, show_posture_alert
 from tray_icon import TrayIcon
+import i18n
 
 logger = logging.getLogger(__name__)
 
@@ -57,6 +58,9 @@ class WorkHealthTimer:
     def __init__(self) -> None:
         self.config = ConfigManager()
         self.idle_detector = IdleDetector()
+        
+        # Set initial language
+        i18n.set_language(self.config.get("language", "en"))
 
         # Active time counters (in seconds)
         self._active_seconds_look_away: float = 0.0
@@ -176,6 +180,9 @@ class WorkHealthTimer:
 
         self._current_alert = show_look_away_alert(
             root=self.root,
+            title=i18n.t("alert_look_away_title"),
+            message=i18n.t("alert_look_away_msg"),
+            button_text=i18n.t("alert_look_away_btn"),
             auto_dismiss_sec=auto_dismiss,
             sound_enabled=sound,
             on_dismiss=self._on_look_away_dismissed,
@@ -198,6 +205,9 @@ class WorkHealthTimer:
 
         self._current_alert = show_posture_alert(
             root=self.root,
+            title=i18n.t("alert_posture_title"),
+            message=i18n.t("alert_posture_msg"),
+            button_text=i18n.t("alert_posture_btn"),
             auto_dismiss_sec=auto_dismiss,
             sound_enabled=sound,
             on_dismiss=self._on_posture_dismissed,
@@ -235,7 +245,7 @@ class WorkHealthTimer:
     def _get_status_text(self) -> str:
         """Generate a status string for the tray menu."""
         if self._is_paused:
-            return "⏸  Paused"
+            return i18n.t("status_paused_menu")
 
         look_remaining = (
             self.config.get(
@@ -282,7 +292,7 @@ class WorkHealthTimer:
         # Title
         tk.Label(
             settings_win,
-            text="⚙  Settings",
+            text=i18n.t("settings_title"),
             font=(FONT_FAMILY, 16, "bold"),
             bg=COLOR_BG_DARK,
             fg=COLOR_TEXT_PRIMARY,
@@ -327,13 +337,13 @@ class WorkHealthTimer:
         frame.columnconfigure(0, weight=1)
         frame.columnconfigure(1, weight=0)
 
-        add_setting(frame, "👀  Eye rest interval (min)", "look_away_interval_min",
+        add_setting(frame, i18n.t("settings_eye_rest"), "look_away_interval_min",
                     DEFAULT_LOOK_AWAY_INTERVAL_MIN, 1, 120, 0)
-        add_setting(frame, "🧘  Posture check interval (min)", "posture_interval_min",
+        add_setting(frame, i18n.t("settings_posture"), "posture_interval_min",
                     DEFAULT_POSTURE_INTERVAL_MIN, 1, 240, 1)
-        add_setting(frame, "⏱  Idle threshold (sec)", "idle_threshold_sec",
+        add_setting(frame, i18n.t("settings_idle"), "idle_threshold_sec",
                     DEFAULT_IDLE_THRESHOLD_SEC, 30, 600, 2)
-        add_setting(frame, "⏳  Alert auto-dismiss (sec)", "alert_auto_dismiss_sec",
+        add_setting(frame, i18n.t("settings_dismiss"), "alert_auto_dismiss_sec",
                     DEFAULT_ALERT_AUTO_DISMISS_SEC, 5, 120, 3)
 
         # Checkboxes frame
@@ -345,7 +355,7 @@ class WorkHealthTimer:
         )
         tk.Checkbutton(
             checks_frame,
-            text="🔔  Enable notification sound",
+            text=i18n.t("settings_sound"),
             variable=sound_var,
             font=(FONT_FAMILY, 11),
             bg=COLOR_BG_DARK,
@@ -361,7 +371,7 @@ class WorkHealthTimer:
         )
         tk.Checkbutton(
             checks_frame,
-            text="🚀  Start with Windows",
+            text=i18n.t("settings_autostart"),
             variable=auto_start_var,
             font=(FONT_FAMILY, 11),
             bg=COLOR_BG_DARK,
@@ -371,6 +381,50 @@ class WorkHealthTimer:
             activeforeground=COLOR_TEXT_PRIMARY,
             anchor="w",
         ).pack(fill="x", pady=(5, 0))
+        
+        # Language Selector
+        lang_frame = tk.Frame(settings_win, bg=COLOR_BG_DARK, padx=30)
+        lang_frame.pack(fill="x", pady=(15, 0))
+        
+        tk.Label(
+            lang_frame,
+            text=i18n.t("settings_language"),
+            font=(FONT_FAMILY, 11),
+            bg=COLOR_BG_DARK,
+            fg=COLOR_TEXT_SECONDARY,
+            anchor="w",
+        ).pack(side="left")
+        
+        lang_var = tk.StringVar(value=self.config.get("language", "en"))
+        lang_options = {"English": "en", "Español": "es"}
+        
+        # Create an inverted mapping for OptionMenu
+        inv_lang_options = {v: k for k, v in lang_options.items()}
+        display_lang_var = tk.StringVar(value=inv_lang_options.get(lang_var.get(), "English"))
+        
+        def on_lang_change(val):
+            lang_var.set(lang_options[val])
+            
+        lang_menu = tk.OptionMenu(
+            lang_frame, 
+            display_lang_var, 
+            *lang_options.keys(),
+            command=on_lang_change
+        )
+        lang_menu.config(
+            bg=COLOR_BG_CARD,
+            fg=COLOR_TEXT_PRIMARY,
+            font=(FONT_FAMILY, 10),
+            activebackground=COLOR_ACCENT_BLUE,
+            highlightthickness=0,
+            relief="flat"
+        )
+        lang_menu["menu"].config(
+            bg=COLOR_BG_CARD,
+            fg=COLOR_TEXT_PRIMARY,
+            font=(FONT_FAMILY, 10)
+        )
+        lang_menu.pack(side="right")
 
         # Save button
         def save_settings():
@@ -378,7 +432,11 @@ class WorkHealthTimer:
                 self.config.set(key, var.get())
             self.config.set("sound_enabled", sound_var.get())
             self.config.set("auto_start", auto_start_var.get())
+            self.config.set("language", lang_var.get())
             self.config.save()
+            
+            # Apply language immediately for new UI elements
+            i18n.set_language(lang_var.get())
 
             # Reset counters so new intervals take effect cleanly
             self._active_seconds_look_away = 0.0
@@ -386,13 +444,16 @@ class WorkHealthTimer:
 
             # Apply auto-start
             self._sync_auto_start()
+            
+            # Refresh tray icon text
+            self.tray._refresh_icon()
 
             logger.info("Settings saved.")
             settings_win.destroy()
 
         save_btn = tk.Button(
             settings_win,
-            text="💾  Save Settings",
+            text=i18n.t("settings_save"),
             font=(FONT_FAMILY, 12, "bold"),
             bg=COLOR_ACCENT_BLUE,
             fg="#000000",

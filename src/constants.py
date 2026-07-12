@@ -24,6 +24,9 @@ DEFAULT_SOUND_ENABLED = False
 # Auto-start
 DEFAULT_AUTO_START = False
 
+# Default Language
+DEFAULT_LANGUAGE = 'en'
+
 
 # Paths
 def get_config_dir() -> str:
