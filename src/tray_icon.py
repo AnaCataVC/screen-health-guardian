@@ -46,14 +46,25 @@ class TrayIcon:
         self._thread: Optional[threading.Thread] = None
 
     def _create_icon_image(self, color: str = None) -> Image.Image:
-        """Generate a heart-shaped tray icon programmatically.
+        """Load the tray icon from disk or fallback to programmatic generation."""
+        import sys
+        import os
         
-        Args:
-            color: The fill color for the heart. Defaults to active color.
-        
-        Returns:
-            A PIL Image suitable for use as a tray icon.
-        """
+        try:
+            if getattr(sys, 'frozen', False):
+                base_path = sys._MEIPASS
+            else:
+                base_path = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+                
+            icon_path = os.path.join(base_path, "icon.ico")
+            if os.path.exists(icon_path):
+                img = Image.open(icon_path)
+                # Resize if necessary, pystray handles scaling, but usually we just return it
+                return img
+        except Exception as e:
+            logger.error(f"Failed to load icon from disk: {e}")
+
+        # Fallback to programmatic generation
         if color is None:
             color = self.COLOR_ACTIVE if not self._is_paused else self.COLOR_PAUSED
 

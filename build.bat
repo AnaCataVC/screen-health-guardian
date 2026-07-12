@@ -13,6 +13,7 @@ python -m PyInstaller ^
     --windowed ^
     --name "WorkHealthTimer" ^
     --icon "icon.ico" ^
+    --add-data "icon.ico;." ^
     --paths src ^
     --hidden-import pystray._win32 ^
     src\main.py
