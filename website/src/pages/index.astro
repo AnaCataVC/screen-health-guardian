@@ -1,0 +1,104 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout title="Work Health Timer - Cuida tu salud al trabajar">
+	<main class="max-w-5xl mx-auto px-6 py-20 flex flex-col items-center text-center">
+		<!-- Hero Section -->
+		<header class="animate-fade-in-up mt-10 md:mt-20">
+			<div class="inline-flex items-center justify-center px-4 py-1.5 mb-8 text-sm font-medium rounded-full glass text-sky-400 border-sky-500/30">
+				<span class="relative flex h-2 w-2 mr-2">
+				  <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-sky-400 opacity-75"></span>
+				  <span class="relative inline-flex rounded-full h-2 w-2 bg-sky-500"></span>
+				</span>
+				Disponible para Windows 10/11
+			</div>
+			
+			<img src="/icon.ico" alt="Work Health Timer Logo" class="w-24 h-24 mx-auto mb-6 drop-shadow-[0_0_20px_rgba(14,165,233,0.4)]" />
+
+			<h1 class="text-5xl md:text-7xl font-bold tracking-tight mb-6 bg-gradient-to-br from-white to-slate-400 bg-clip-text text-transparent">
+				Work Health Timer <br/> 
+				<span class="text-sky-400 bg-gradient-to-r from-sky-400 to-sky-200 bg-clip-text text-transparent">
+					Cuida tu salud
+				</span>
+			</h1>
+			
+			<p class="text-lg md:text-xl text-slate-400 max-w-2xl mx-auto mb-12 leading-relaxed">
+				Una aplicación de escritorio ligera que te envía alertas periódicas de salud mientras trabajas. Detecta tu actividad real para no interrumpirte si no estás en el PC.
+			</p>
+			
+			<div class="flex flex-col sm:flex-row gap-4 justify-center">
+				<a href="https://github.com/AnaCataVC/work-health-timer/releases" class="px-8 py-4 rounded-xl font-semibold bg-sky-500 text-white hover:bg-sky-400 transition-colors shadow-[0_0_20px_rgba(14,165,233,0.3)] hover:shadow-[0_0_30px_rgba(14,165,233,0.5)] transform hover:-translate-y-1 duration-200">
+					Descargar Instalador (.exe)
+				</a>
+				<a href="https://github.com/AnaCataVC/work-health-timer" target="_blank" class="px-8 py-4 rounded-xl font-semibold glass glass-hover transition-all text-white flex items-center justify-center gap-2 transform hover:-translate-y-1 duration-200">
+					<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path fill-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z" clip-rule="evenodd"></path></svg>
+					Ver Repositorio
+				</a>
+			</div>
+		</header>
+
+		<!-- Features Section -->
+		<section class="mt-32 w-full animate-fade-in-up" style="animation-delay: 0.2s; animation-fill-mode: both;">
+			<h2 class="text-3xl font-bold mb-12">Características Principales</h2>
+			<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+				
+				<div class="glass p-8 rounded-2xl text-left hover:border-blue-500/40 transition-colors group relative overflow-hidden">
+					<div class="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+					<div class="w-12 h-12 bg-blue-500/20 text-blue-400 rounded-xl flex items-center justify-center text-2xl mb-6 group-hover:scale-110 transition-transform shadow-[0_0_15px_rgba(59,130,246,0.2)]">
+						👀
+					</div>
+					<h3 class="text-xl font-semibold mb-3">Descanso Visual</h3>
+					<p class="text-slate-400 leading-relaxed text-sm">
+						Sigue la regla 20-20-20. Cada 20 minutos de trabajo activo, te recordamos mirar a 6 metros (20 pies) de distancia durante 20 segundos para relajar tu vista.
+					</p>
+				</div>
+
+				<div class="glass p-8 rounded-2xl text-left hover:border-sky-500/40 transition-colors group relative overflow-hidden">
+					<div class="absolute inset-0 bg-gradient-to-br from-sky-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+					<div class="w-12 h-12 bg-sky-500/20 text-sky-400 rounded-xl flex items-center justify-center text-2xl mb-6 group-hover:scale-110 transition-transform shadow-[0_0_15px_rgba(14,165,233,0.2)]">
+						🧘
+					</div>
+					<h3 class="text-xl font-semibold mb-3">Control de Postura</h3>
+					<p class="text-slate-400 leading-relaxed text-sm">
+						Evita los dolores de espalda. Recibe alertas no intrusivas cada 60 minutos para corregir tu postura, estirarte y asegurarte de sentarte derecho.
+					</p>
+				</div>
+
+				<div class="glass p-8 rounded-2xl text-left hover:border-purple-500/40 transition-colors group relative overflow-hidden">
+					<div class="absolute inset-0 bg-gradient-to-br from-purple-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+					<div class="w-12 h-12 bg-purple-500/20 text-purple-400 rounded-xl flex items-center justify-center text-2xl mb-6 group-hover:scale-110 transition-transform shadow-[0_0_15px_rgba(168,85,247,0.2)]">
+						⚡
+					</div>
+					<h3 class="text-xl font-semibold mb-3">Detección Inteligente</h3>
+					<p class="text-slate-400 leading-relaxed text-sm">
+						Solo se cuenta el tiempo que pasas activo (usando teclado o ratón). Si te levantas por un café, los contadores se pausan de forma automática.
+					</p>
+				</div>
+
+			</div>
+		</section>
+
+		<!-- Footer -->
+		<footer class="mt-32 pt-8 pb-8 border-t border-slate-800/50 w-full text-slate-500 text-sm flex justify-center items-center">
+			<p>© {new Date().getFullYear()} Desarrollado por <a href="https://ana-catalina.com" target="_blank" class="text-sky-400 hover:text-sky-300 transition-colors">Ana-Catalina</a>.</p>
+		</footer>
+	</main>
+</Layout>
+
+<style>
+	.animate-fade-in-up {
+		animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+	}
+	
+	@keyframes fadeInUp {
+		from {
+			opacity: 0;
+			transform: translateY(30px);
+		}
+		to {
+			opacity: 1;
+			transform: translateY(0);
+		}
+	}
+</style>
