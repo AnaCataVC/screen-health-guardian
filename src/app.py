@@ -278,6 +278,20 @@ class WorkHealthTimer:
         settings_win.configure(bg=COLOR_BG_DARK)
         settings_win.resizable(False, False)
         settings_win.wm_attributes("-topmost", True)
+        
+        import os
+        import sys
+        try:
+            if getattr(sys, 'frozen', False):
+                base_path = sys._MEIPASS
+            else:
+                base_path = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+            icon_path = os.path.join(base_path, "icon.ico")
+            if os.path.exists(icon_path):
+                settings_win.iconbitmap(icon_path)
+        except Exception as e:
+            logger.error("Failed to load icon for settings window: %s", e)
+            
         # NOTE: no transient(self.root) — the root window is withdrawn, and a
         # transient of a hidden master stays withdrawn (invisible) on Windows.
 
@@ -396,11 +410,11 @@ class WorkHealthTimer:
         ).pack(side="left")
         
         lang_var = tk.StringVar(value=self.config.get("language", "en"))
-        lang_options = {"English": "en", "Español": "es"}
+        lang_options = {"English ▼": "en", "Español ▼": "es"}
         
         # Create an inverted mapping for OptionMenu
         inv_lang_options = {v: k for k, v in lang_options.items()}
-        display_lang_var = tk.StringVar(value=inv_lang_options.get(lang_var.get(), "English"))
+        display_lang_var = tk.StringVar(value=inv_lang_options.get(lang_var.get(), "English ▼"))
         
         def on_lang_change(val):
             lang_var.set(lang_options[val])
@@ -417,7 +431,11 @@ class WorkHealthTimer:
             font=(FONT_FAMILY, 10),
             activebackground=COLOR_ACCENT_BLUE,
             highlightthickness=0,
-            relief="flat"
+            relief="flat",
+            indicatoron=0,
+            padx=10,
+            pady=2,
+            cursor="hand2"
         )
         lang_menu["menu"].config(
             bg=COLOR_BG_CARD,

@@ -22,13 +22,13 @@ _translations = {
         # Tray Icon
         "tray_resume": "▶  Resume",
         "tray_pause": "⏸  Pause",
-        "tray_settings": "⚙  Settings",
+        "tray_settings": "Settings",
         "tray_quit": "✕  Quit",
         "tray_status_paused": "Paused",
         "tray_status_active": "Active",
         
         # Settings UI
-        "settings_title": "⚙  Settings",
+        "settings_title": "Settings",
         "settings_eye_rest": "👀  Eye rest interval (min)",
         "settings_posture": "🧘  Posture check interval (min)",
         "settings_idle": "⏱  Idle threshold (sec)",
@@ -54,13 +54,13 @@ _translations = {
         # Tray Icon
         "tray_resume": "▶  Reanudar",
         "tray_pause": "⏸  Pausar",
-        "tray_settings": "⚙  Configuración",
+        "tray_settings": "Configuración",
         "tray_quit": "✕  Salir",
         "tray_status_paused": "Pausado",
         "tray_status_active": "Activo",
         
         # Settings UI
-        "settings_title": "⚙  Configuración",
+        "settings_title": "Configuración",
         "settings_eye_rest": "👀  Intervalo de descanso visual (min)",
         "settings_posture": "🧘  Intervalo de postura (min)",
         "settings_idle": "⏱  Umbral de inactividad (seg)",

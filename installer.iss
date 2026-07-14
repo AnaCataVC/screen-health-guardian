@@ -17,8 +17,8 @@ AllowNoIcons=yes
 SetupIconFile=icon.ico
 OutputDir=dist
 OutputBaseFilename=WorkHealthTimer-Setup
-Compression=lzma2/max
-SolidCompression=yes
+Compression=lzma2/normal
+SolidCompression=no
 PrivilegesRequired=lowest
 ArchitecturesInstallIn64BitMode=x64
 

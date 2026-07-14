@@ -40,6 +40,8 @@ if exist "%ISCC%" (
     ) else (
         echo ✅ Installer built successfully!
         echo    Location: dist\WorkHealthTimer-Setup.exe
+        echo 🧹 Cleaning up portable directory...
+        rmdir /s /q "dist\WorkHealthTimer"
     )
 ) else (
     echo ⚠️ Inno Setup Compiler ISCC.exe not found.
@@ -50,4 +52,4 @@ if exist "%ISCC%" (
 )
 
 echo.
-pause
+echo Build process complete.
