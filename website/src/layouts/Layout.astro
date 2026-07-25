@@ -1,15 +1,18 @@
 ---
 import '../styles/global.css';
+import LanguagePicker from '../components/LanguagePicker.astro';
+import { getLangFromUrl } from '../i18n/utils';
 
 interface Props {
 	title: string;
 }
 
 const { title } = Astro.props;
+const lang = getLangFromUrl(Astro.url);
 ---
 
 <!doctype html>
-<html lang="es">
+<html lang={lang}>
 	<head>
 		<meta charset="UTF-8" />
 		<meta name="description" content="Work Health Timer - Aplicación de escritorio para cuidar tu salud visual y postural mientras trabajas." />
@@ -23,6 +26,7 @@ const { title } = Astro.props;
 		<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 	</head>
 	<body>
+		<LanguagePicker />
 		<slot />
 		<script>
 		  // Vercel analytics fallback

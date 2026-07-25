@@ -1,0 +1,21 @@
+---
+import { languages } from '../i18n/ui';
+import { getLangFromUrl, getRouteFromUrl } from '../i18n/utils';
+
+const currentLang = getLangFromUrl(Astro.url);
+const route = getRouteFromUrl(Astro.url);
+---
+<div class="fixed top-6 right-6 z-50 flex items-center gap-2 glass px-3 py-1.5 rounded-full border border-slate-700/50">
+  {Object.entries(languages).map(([lang, label]) => (
+    <a
+      href={lang === 'es' ? (route ? `/${route}` : '/') : (route ? `/${lang}/${route}` : `/${lang}`)}
+      class={`px-2 py-1 text-xs font-semibold rounded-full transition-colors ${
+        currentLang === lang 
+          ? 'bg-sky-500 text-white' 
+          : 'text-slate-400 hover:text-white hover:bg-slate-800'
+      }`}
+    >
+      {label}
+    </a>
+  ))}
+</div>
