@@ -40,63 +40,76 @@ const t = useTranslations(lang);
   </header>
 
   <!-- Content Section -->
-  <section class="mt-32 w-full animate-fade-in-up" style="animation-delay: 0.2s; animation-fill-mode: both;">
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
-      
-      <!-- Left: Features -->
-      <div class="flex flex-col gap-6 w-full">
-        <h2 class="text-3xl font-bold mb-4 text-left">{t('features.title')}</h2>
-        
-        <div class="glass p-6 md:p-8 rounded-2xl text-left hover:border-blue-500/40 transition-colors group relative overflow-hidden">
-          <div class="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
-          <div class="flex items-center gap-4 mb-3">
-            <div class="w-12 h-12 bg-blue-500/20 text-blue-400 rounded-xl flex items-center justify-center text-2xl group-hover:scale-110 transition-transform shadow-[0_0_15px_rgba(59,130,246,0.2)] shrink-0">
-              👀
-            </div>
-            <h3 class="text-xl font-semibold">{t('feature1.title')}</h3>
+  <section class="mt-20 md:mt-32 w-full animate-fade-in-up flex flex-col gap-20 md:gap-32" style="animation-delay: 0.2s; animation-fill-mode: both;">
+    
+    <!-- Feature 1: Eyes -->
+    <div class={`grid grid-cols-1 ${lang === 'es' ? 'lg:grid-cols-2' : ''} gap-8 lg:gap-16 items-center`}>
+      <div class="order-2 lg:order-1 w-full">
+        <div class="glass p-6 md:p-12 rounded-3xl flex flex-col gap-6 text-left relative overflow-hidden group border border-slate-700/50 hover:border-blue-500/30 transition-colors">
+          <div class="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-transparent opacity-100"></div>
+          <div class="relative z-10 w-16 h-16 bg-blue-500/20 text-blue-400 rounded-2xl flex items-center justify-center text-3xl shadow-[0_0_20px_rgba(59,130,246,0.2)]">
+            👀
           </div>
-          <p class="text-slate-400 leading-relaxed text-sm">
-            {t('feature1.desc')}
-          </p>
-        </div>
-
-        <div class="glass p-6 md:p-8 rounded-2xl text-left hover:border-sky-500/40 transition-colors group relative overflow-hidden">
-          <div class="absolute inset-0 bg-gradient-to-br from-sky-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
-          <div class="flex items-center gap-4 mb-3">
-            <div class="w-12 h-12 bg-sky-500/20 text-sky-400 rounded-xl flex items-center justify-center text-2xl group-hover:scale-110 transition-transform shadow-[0_0_15px_rgba(14,165,233,0.2)] shrink-0">
-              🧘
-            </div>
-            <h3 class="text-xl font-semibold">{t('feature2.title')}</h3>
-          </div>
-          <p class="text-slate-400 leading-relaxed text-sm">
-            {t('feature2.desc')}
-          </p>
-        </div>
-
-        <div class="glass p-6 md:p-8 rounded-2xl text-left hover:border-purple-500/40 transition-colors group relative overflow-hidden">
-          <div class="absolute inset-0 bg-gradient-to-br from-purple-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
-          <div class="flex items-center gap-4 mb-3">
-            <div class="w-12 h-12 bg-purple-500/20 text-purple-400 rounded-xl flex items-center justify-center text-2xl group-hover:scale-110 transition-transform shadow-[0_0_15px_rgba(168,85,247,0.2)] shrink-0">
-              ⚡
-            </div>
-            <h3 class="text-xl font-semibold">{t('feature3.title')}</h3>
-          </div>
-          <p class="text-slate-400 leading-relaxed text-sm">
-            {t('feature3.desc')}
-          </p>
+          <h2 class="relative z-10 text-3xl md:text-4xl font-bold">{t('feature1.title')}</h2>
+          <p class="relative z-10 text-slate-400 leading-relaxed text-lg">{t('feature1.desc')}</p>
         </div>
       </div>
-
-      <!-- Right: Configuration -->
-      <div class="flex flex-col items-center lg:items-start w-full mt-6 lg:mt-0">
-        <h2 class="text-3xl font-bold mb-8 text-center lg:text-left w-full">{t('config.title')}</h2>
-        <div class="glass p-2 md:p-4 rounded-3xl relative group overflow-hidden max-w-sm w-full mx-auto lg:mx-0 border border-slate-700/50 hover:border-sky-500/50 transition-colors shadow-2xl">
-          <div class="absolute inset-0 bg-gradient-to-tr from-sky-500/10 via-transparent to-purple-500/10 opacity-50"></div>
-          <img src="/config.png" alt={t('config.alt')} class="w-full h-auto rounded-2xl relative z-10 shadow-lg border border-slate-800/80" />
+      {lang === 'es' && (
+      <div class="order-1 lg:order-2 w-full">
+        <div class="glass p-2 md:p-4 rounded-3xl relative overflow-hidden w-full mx-auto border border-slate-700/50 shadow-2xl">
+          <div class="absolute inset-0 bg-gradient-to-tr from-blue-500/10 via-transparent to-transparent opacity-50"></div>
+          <img src="/eyes.png" alt={t('feature1.title')} class="w-full h-auto rounded-2xl relative z-10 shadow-lg border border-slate-800/80" />
         </div>
       </div>
-
+      )}
     </div>
+
+    <!-- Feature 2: Posture -->
+    <div class={`grid grid-cols-1 ${lang === 'es' ? 'lg:grid-cols-2' : ''} gap-8 lg:gap-16 items-center`}>
+      {lang === 'es' && (
+      <div class="order-1 w-full">
+        <div class="glass p-2 md:p-4 rounded-3xl relative overflow-hidden w-full mx-auto border border-slate-700/50 shadow-2xl">
+          <div class="absolute inset-0 bg-gradient-to-tr from-transparent via-transparent to-sky-500/10 opacity-50"></div>
+          <img src="/posture.png" alt={t('feature2.title')} class="w-full h-auto rounded-2xl relative z-10 shadow-lg border border-slate-800/80" />
+        </div>
+      </div>
+      )}
+      <div class="order-2 w-full">
+        <div class="glass p-6 md:p-12 rounded-3xl flex flex-col gap-6 text-left relative overflow-hidden group border border-slate-700/50 hover:border-sky-500/30 transition-colors">
+          <div class="absolute inset-0 bg-gradient-to-br from-sky-500/5 to-transparent opacity-100"></div>
+          <div class="relative z-10 w-16 h-16 bg-sky-500/20 text-sky-400 rounded-2xl flex items-center justify-center text-3xl shadow-[0_0_20px_rgba(14,165,233,0.2)]">
+            ✨
+          </div>
+          <h2 class="relative z-10 text-3xl md:text-4xl font-bold">{t('feature2.title')}</h2>
+          <p class="relative z-10 text-slate-400 leading-relaxed text-lg">{t('feature2.desc')}</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Feature 3: Configuration & Smart Detection -->
+    <div class={`grid grid-cols-1 ${lang === 'es' ? 'lg:grid-cols-2' : ''} gap-8 lg:gap-16 items-center`}>
+      <div class="order-2 lg:order-1 w-full">
+        <div class="glass p-6 md:p-12 rounded-3xl flex flex-col gap-6 text-left relative overflow-hidden group border border-slate-700/50 hover:border-purple-500/30 transition-colors">
+          <div class="absolute inset-0 bg-gradient-to-br from-purple-500/5 to-transparent opacity-100"></div>
+          <div class="relative z-10 flex gap-4">
+            <div class="w-16 h-16 bg-purple-500/20 text-purple-400 rounded-2xl flex items-center justify-center text-3xl shadow-[0_0_20px_rgba(168,85,247,0.2)] shrink-0">
+              ⚙️
+            </div>
+          </div>
+          <h2 class="relative z-10 text-3xl md:text-4xl font-bold">{t('config.combined_title')}</h2>
+          <p class="relative z-10 text-slate-400 leading-relaxed text-lg">{t('feature3.desc')}</p>
+        </div>
+      </div>
+      {lang === 'es' && (
+      <div class="order-1 lg:order-2 w-full">
+        <div class="glass p-2 md:p-4 rounded-3xl relative overflow-hidden max-w-sm w-full mx-auto lg:mx-0 border border-slate-700/50 shadow-2xl">
+          <div class="absolute inset-0 bg-gradient-to-tr from-purple-500/10 via-transparent to-transparent opacity-50"></div>
+          <img src="/config.png" alt={t('config.title')} class="w-full h-auto rounded-2xl relative z-10 shadow-lg border border-slate-800/80" />
+        </div>
+      </div>
+      )}
+    </div>
+
   </section>
 
   <!-- Footer -->
