@@ -45,3 +45,11 @@ La aplicación está **funcional**, tanto en modo desarrollo como empaquetada en
 Si la app no inicia en la máquina de un usuario, revisar:
 - `%APPDATA%\WorkHealthTimer\crash.log` — volcado de cualquier error fatal de inicio.
 - `%APPDATA%\WorkHealthTimer\app.log` — log normal de operación.
+
+---
+
+## Mejoras de Interfaz y Diseño (UI/UX)
+
+1. **Refactorización de Botones**: Se migró de botones dibujados en `Canvas` (que presentaban problemas de anti-aliasing y texto cortado en Windows) a botones nativos `tk.Button` con padding explícito (`ipadx`, `ipady`), logrando un acabado nítido y profesional.
+2. **Sitio Web (Astro)**: Se rediseñó el portal con un layout moderno de *glass cards* alternadas en zigzag, adaptativo para dispositivos móviles, integrando limpiamente la iconografía y las capturas de pantalla de la app.
+3. **Lenguaje Inclusivo y Ajustes**: Se estandarizaron todos los textos (App, Web, README) para ser completamente neutrales en cuanto a género, y se ajustaron saltos de línea para evitar problemas de _word wrap_ en los cuadros de diálogo.
