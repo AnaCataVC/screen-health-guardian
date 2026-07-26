@@ -13,15 +13,15 @@ _translations = {
         # Alert Overlays
         "alert_look_away_title": "Time to Rest Your Eyes",
         "alert_look_away_msg": "Look at something 6 meters (20 feet) away for 20 seconds.\nYour eyes will thank you!",
-        "alert_look_away_btn": "✓  Done, eyes rested",
+        "alert_look_away_btn": "Done, eyes rested",
         "alert_posture_title": "Check Your Posture",
-        "alert_posture_msg": "Sit up straight! Shoulders back, feet flat on the floor,\nand screen at eye level.",
-        "alert_posture_btn": "✓  Posture corrected",
+        "alert_posture_msg": "Sit up straight! Shoulders back,\nfeet flat on the floor and screen at eye level.",
+        "alert_posture_btn": "Posture corrected",
         "alert_window_title": "Work Health Timer Alert",
         
         # Tray Icon
         "tray_resume": "▶  Resume",
-        "tray_pause": "⏸  Pause",
+        "tray_pause": "Pause",
         "tray_settings": "Settings",
         "tray_quit": "✕  Quit",
         "tray_status_paused": "Paused",
@@ -29,31 +29,37 @@ _translations = {
         
         # Settings UI
         "settings_title": "Settings",
-        "settings_eye_rest": "👀  Eye rest interval (min)",
-        "settings_posture": "🧘  Posture check interval (min)",
-        "settings_idle": "⏱  Idle threshold (sec)",
-        "settings_dismiss": "⏳  Alert auto-dismiss (sec)",
+        "settings_subtitle": "Configure timers and application preferences",
+        "settings_sec_intervals": "TIMER INTERVALS",
+        "settings_sec_preferences": "PREFERENCES & SYSTEM",
+        "settings_eye_rest": "👀  Eye rest interval",
+        "settings_posture": "✨  Posture check interval",
+        "settings_idle": "⏱  Idle threshold",
+        "settings_dismiss": "⏳  Alert auto-dismiss",
         "settings_sound": "🔔  Enable notification sound",
         "settings_autostart": "🚀  Start with Windows",
         "settings_language": "🌐  Language",
-        "settings_save": "💾  Save Settings",
+        "settings_save": "Save Settings",
+        "settings_cancel": "Cancel",
+        "unit_min": "min",
+        "unit_sec": "sec",
         
         # Tray Status Formatting
-        "status_paused_menu": "⏸  Paused",
+        "status_paused_menu": "Paused",
     },
     "es": {
         # Alert Overlays
         "alert_look_away_title": "Hora de descansar la vista",
         "alert_look_away_msg": "Mira algo a 6 metros (20 pies) de distancia durante 20 segundos.\n¡Tus ojos te lo agradecerán!",
-        "alert_look_away_btn": "✓  Listo, vista descansada",
+        "alert_look_away_btn": "Listo, vista descansada",
         "alert_posture_title": "Revisa tu postura",
-        "alert_posture_msg": "¡Siéntate derecho! Hombros atrás, pies apoyados en el suelo,\ny la pantalla a la altura de los ojos.",
-        "alert_posture_btn": "✓  Postura corregida",
+        "alert_posture_msg": "¡Mantén la espalda recta! Hombros atrás,\npies apoyados en el suelo y la pantalla a la altura de los ojos.",
+        "alert_posture_btn": "Postura corregida",
         "alert_window_title": "Alerta de Work Health Timer",
         
         # Tray Icon
         "tray_resume": "▶  Reanudar",
-        "tray_pause": "⏸  Pausar",
+        "tray_pause": "Pausar",
         "tray_settings": "Configuración",
         "tray_quit": "✕  Salir",
         "tray_status_paused": "Pausado",
@@ -61,17 +67,23 @@ _translations = {
         
         # Settings UI
         "settings_title": "Configuración",
-        "settings_eye_rest": "👀  Intervalo de descanso visual (min)",
-        "settings_posture": "🧘  Intervalo de postura (min)",
-        "settings_idle": "⏱  Umbral de inactividad (seg)",
-        "settings_dismiss": "⏳  Auto-ocultar alerta (seg)",
-        "settings_sound": "🔔  Activar sonido de notificación",
+        "settings_subtitle": "Configura tus descansos y preferencias",
+        "settings_sec_intervals": "INTERVALOS Y TIEMPOS",
+        "settings_sec_preferences": "PREFERENCIAS Y SISTEMA",
+        "settings_eye_rest": "👀  Descanso visual",
+        "settings_posture": "✨  Revisión de postura",
+        "settings_idle": "⏱  Umbral de inactividad",
+        "settings_dismiss": "⏳  Auto-ocultar alerta",
+        "settings_sound": "🔔  Sonido de notificación",
         "settings_autostart": "🚀  Iniciar con Windows",
         "settings_language": "🌐  Idioma",
-        "settings_save": "💾  Guardar Configuración",
+        "settings_save": "Guardar Configuración",
+        "settings_cancel": "Cancelar",
+        "unit_min": "min",
+        "unit_sec": "seg",
         
         # Tray Status Formatting
-        "status_paused_menu": "⏸  Pausado",
+        "status_paused_menu": "Pausado",
     }
 }
 

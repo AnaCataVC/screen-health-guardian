@@ -123,9 +123,9 @@ Una aplicación de escritorio ligera para Windows que envía alertas periódicas
 | Alerta | Intervalo por Defecto | Propósito |
 |---|---|---|
 | 👀 **Descanso Visual** | 20 minutos | Regla 20-20-20 — mirar a 20 pies (6m) por 20 segundos |
-| 🧘 **Postura** | 60 minutos | Recordatorio para sentarse derecho |
+| 🧘 **Postura** | 60 minutos | Recordatorio para mantener la espalda recta |
 
-- **Detección de Actividad**: Solo cuenta el tiempo activo (teclado/ratón). Si estás inactivo por más de 2 minutos, los temporizadores se pausan automáticamente.
+- **Detección de Actividad**: Solo cuenta el tiempo de actividad (teclado/ratón). Si no hay actividad por más de 2 minutos, los temporizadores se pausan automáticamente.
 - **Bandeja del Sistema**: Ícono de corazón en el área de notificaciones con un menú para pausar, configurar o salir.
 - **Configurable**: Todos los intervalos, umbral de inactividad, sonido y auto-inicio son ajustables desde la ventana de Ajustes.
 - **Auto-Inicio con Windows**: Opcional — configurable desde Ajustes.
