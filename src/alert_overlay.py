@@ -6,6 +6,90 @@ import logging
 logger = logging.getLogger(__name__)
 
 
+def _create_rounded_polygon(canvas: tk.Canvas, x1: float, y1: float, x2: float, y2: float, radius: int = 0, **kwargs):
+    """
+    Draw a flat rectangle. 
+    Tkinter on Windows lacks anti-aliasing, causing rounded corners to look jagged or 'chopped'.
+    A crisp, flat rectangle looks much cleaner and more professional in this framework.
+    """
+    tag = f"rect_{id(canvas)}_{id(kwargs)}"
+    kwargs["tags"] = (tag,)
+    
+    fill_color = kwargs.get("fill", "")
+    if fill_color:
+        kwargs["outline"] = fill_color
+        
+    if "smooth" in kwargs:
+        del kwargs["smooth"]
+        
+    canvas.create_rectangle(x1, y1, x2, y2, **kwargs)
+    return tag
+
+
+class RoundedCanvasButton(tk.Canvas):
+    """A sleek canvas-based button with rounded corners and smooth hover states."""
+
+    def __init__(
+        self,
+        parent,
+        text: str,
+        command,
+        bg_color: str,
+        fg_color: str,
+        hover_bg: str,
+        hover_fg: str | None = None,
+        radius: int = 10,
+        font=None,
+        width: int = 140,
+        height: int = 38,
+        **kwargs,
+    ):
+        super().__init__(
+            parent,
+            width=width,
+            height=height,
+            bg=parent["bg"],
+            highlightthickness=0,
+            bd=0,
+            cursor="hand2",
+            **kwargs,
+        )
+        self.command = command
+        self.bg_color = bg_color
+        self.fg_color = fg_color
+        self.hover_bg = hover_bg
+        self.hover_fg = hover_fg or fg_color
+        self.radius = radius
+        self.text_str = text
+        self.font = font or ("Segoe UI", 10, "bold")
+        self.w = width
+        self.h = height
+
+        self._rect = _create_rounded_polygon(
+            self, 0, 0, self.w, self.h, radius=self.radius, fill=self.bg_color, outline=""
+        )
+        self._text = self.create_text(
+            self.w / 2, (self.h / 2) + 1, text=self.text_str, fill=self.fg_color, font=self.font
+        )
+
+        self.bind("<Enter>", self._on_enter)
+        self.bind("<Leave>", self._on_leave)
+        self.bind("<Button-1>", self._on_click)
+        self.tag_bind(self._text, "<Button-1>", self._on_click)
+
+    def _on_enter(self, event=None):
+        self.itemconfig(self._rect, fill=self.hover_bg, outline=self.hover_bg)
+        self.itemconfig(self._text, fill=self.hover_fg)
+
+    def _on_leave(self, event=None):
+        self.itemconfig(self._rect, fill=self.bg_color, outline=self.bg_color)
+        self.itemconfig(self._text, fill=self.fg_color)
+
+    def _on_click(self, event=None):
+        if self.command:
+            self.command()
+
+
 class AlertOverlay:
     """A modern, dark-themed overlay alert window using tkinter.
     
@@ -59,75 +143,87 @@ class AlertOverlay:
         # transient whose master is hidden inherits the withdrawn state and
         # never becomes visible. overrideredirect already keeps it off the taskbar.
 
-        # Window dimensions and centering
-        win_w, win_h = 480, 280
+        # Window dimensions and centering (larger & spacious card)
+        win_w, win_h = 600, 380
         screen_w = self.overlay.winfo_screenwidth()
         screen_h = self.overlay.winfo_screenheight()
         x = (screen_w - win_w) // 2
         y = (screen_h - win_h) // 2
         self.overlay.geometry(f"{win_w}x{win_h}+{x}+{y}")
 
-        # Main container frame with padding
-        container = tk.Frame(self.overlay, bg='#0f0f23', padx=30, pady=20)
-        container.pack(fill='both', expand=True)
+        # Main container frame with subtle border
+        container = tk.Frame(
+            self.overlay,
+            bg='#0f0f23',
+            highlightbackground='#292b4a',
+            highlightthickness=1,
+        )
+        container.pack(fill='both', expand=True, padx=0, pady=0)
+
+        inner_frame = tk.Frame(container, bg='#0f0f23', padx=35, pady=25)
+        inner_frame.pack(fill='both', expand=True)
+        
+        # Center alignment frame
+        content_frame = tk.Frame(inner_frame, bg='#0f0f23')
+        content_frame.pack(expand=True)
 
         # Emoji label
         emoji_label = tk.Label(
-            container,
+            content_frame,
             text=emoji,
-            font=("Segoe UI Emoji", 42),
+            font=("Segoe UI Emoji", 48),
             bg='#0f0f23',
             fg='#ffffff',
         )
-        emoji_label.pack(pady=(5, 5))
+        emoji_label.pack(pady=(0, 6))
 
         # Title label
         title_label = tk.Label(
-            container,
+            content_frame,
             text=title,
-            font=("Segoe UI", 16, "bold"),
+            font=("Segoe UI", 18, "bold"),
             bg='#0f0f23',
             fg=accent_color,
         )
-        title_label.pack(pady=(0, 4))
+        title_label.pack(pady=(0, 6))
 
         # Message label
         msg_label = tk.Label(
-            container,
+            content_frame,
             text=message,
-            font=("Segoe UI", 11),
+            font=("Segoe UI", 12),
             bg='#0f0f23',
             fg='#b0bec5',
-            wraplength=400,
+            wraplength=460,
+            justify="center",
         )
-        msg_label.pack(pady=(0, 15))
+        msg_label.pack(pady=(0, 20))
 
         # Dismiss button
-        btn_frame = tk.Frame(container, bg='#0f0f23')
+        btn_frame = tk.Frame(content_frame, bg='#0f0f23')
         btn_frame.pack()
 
+        hover_fg_color = '#0b0e14' if accent_color == '#4fc3f7' else '#ffffff'
         self.btn = tk.Button(
             btn_frame,
             text=button_text,
-            font=("Segoe UI", 11),
-            bg='#2d2d5e',
-            fg='#ffffff',
-            activebackground=accent_color,
-            activeforeground='#ffffff',
-            relief='flat',
-            cursor='hand2',
-            padx=24,
-            pady=8,
             command=self.dismiss,
+            bg='#27294d',
+            fg='#ffffff',
+            font=("Segoe UI", 11, "bold"),
+            relief="flat",
+            bd=0,
+            padx=30,
+            pady=10,
+            cursor="hand2",
+            activebackground=accent_color,
+            activeforeground=hover_fg_color,
+            highlightthickness=0,
         )
-        self.btn.pack()
-
-        # Hover effects
-        self.btn.bind('<Enter>', lambda e: self.btn.configure(bg=accent_color))
-        self.btn.bind('<Leave>', lambda e: self.btn.configure(bg='#2d2d5e'))
+        self.btn.pack(ipadx=10, ipady=6)
 
         # Allow closing by clicking anywhere on the overlay
-        for widget in [self.overlay, container, emoji_label, title_label, msg_label]:
+        for widget in [self.overlay, container, inner_frame, content_frame, emoji_label, title_label, msg_label]:
             widget.bind('<Button-1>', lambda e: self.dismiss())
 
         # Start fade-in animation
@@ -230,7 +326,7 @@ def show_posture_alert(
     """
     return AlertOverlay(
         root=root,
-        emoji="🧘",
+        emoji="✨",
         title=title,
         message=message,
         button_text=button_text,

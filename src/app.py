@@ -22,13 +22,22 @@ from constants import (
     DEFAULT_ALERT_AUTO_DISMISS_SEC,
     DEFAULT_SOUND_ENABLED,
     DEFAULT_AUTO_START,
+    REGISTRY_KEY,
+    REGISTRY_VALUE_NAME,
     COLOR_BG_DARK,
     COLOR_BG_CARD,
+    COLOR_CARD_BG,
+    COLOR_BORDER,
+    COLOR_INPUT_BG,
     COLOR_ACCENT_BLUE,
+    COLOR_ACCENT_HOVER,
     COLOR_ACCENT_PURPLE,
     COLOR_TEXT_PRIMARY,
     COLOR_TEXT_SECONDARY,
+    COLOR_TEXT_MUTED,
     COLOR_BUTTON_DISMISS,
+    COLOR_BUTTON_SECONDARY,
+    COLOR_BUTTON_SECONDARY_HOVER,
     FONT_FAMILY,
 )
 from config_manager import ConfigManager
@@ -40,8 +49,233 @@ import i18n
 logger = logging.getLogger(__name__)
 
 # Windows Registry key for auto-start
-REGISTRY_KEY = r"Software\Microsoft\Windows\CurrentVersion\Run"
-REGISTRY_VALUE_NAME = "WorkHealthTimer"
+# ── Custom Modern UI Widgets for Settings Panel ─────────────────────
+
+def _create_rounded_polygon(canvas: tk.Canvas, x1: float, y1: float, x2: float, y2: float, radius: int = 0, **kwargs):
+    """
+    Draw a flat rectangle. 
+    Tkinter on Windows lacks anti-aliasing, causing rounded corners to look jagged or 'chopped'.
+    A crisp, flat rectangle looks much cleaner and more professional in this framework.
+    """
+    tag = f"rect_{id(canvas)}_{id(kwargs)}"
+    kwargs["tags"] = (tag,)
+    
+    fill_color = kwargs.get("fill", "")
+    if fill_color:
+        kwargs["outline"] = fill_color
+        
+    if "smooth" in kwargs:
+        del kwargs["smooth"]
+        
+    canvas.create_rectangle(x1, y1, x2, y2, **kwargs)
+    return tag
+
+
+class FlatButton(tk.Button):
+    """A clean flat-style button using native tk.Button — no canvas, no clipping."""
+
+    def __init__(
+        self,
+        parent,
+        text: str,
+        command,
+        bg_color: str,
+        fg_color: str,
+        hover_bg: str,
+        hover_fg: str | None = None,
+        font=None,
+        padx: int = 18,
+        pady: int = 6,
+        **kwargs,
+    ):
+        self.bg_color = bg_color
+        self.fg_color = fg_color
+        self.hover_bg = hover_bg
+        self.hover_fg = hover_fg or fg_color
+        super().__init__(
+            parent,
+            text=text,
+            command=command,
+            bg=bg_color,
+            fg=fg_color,
+            font=font or (FONT_FAMILY, 10, "bold"),
+            relief="flat",
+            bd=0,
+            padx=padx,
+            pady=pady,
+            cursor="hand2",
+            activebackground=hover_bg,
+            activeforeground=hover_fg or fg_color,
+            highlightthickness=0,
+            **kwargs,
+        )
+        self.bind("<Enter>", self._on_enter)
+        self.bind("<Leave>", self._on_leave)
+
+    def _on_enter(self, event=None):
+        self.config(bg=self.hover_bg, fg=self.hover_fg)
+
+    def _on_leave(self, event=None):
+        self.config(bg=self.bg_color, fg=self.fg_color)
+
+
+# Keep alias so any remaining references don't break
+RoundedCanvasButton = FlatButton
+
+
+class ModernStepper(tk.Frame):
+    """Modern numeric stepper widget: [-]  [ VALUE ]  [+]"""
+
+    def __init__(
+        self,
+        parent,
+        var: tk.IntVar,
+        min_val: int,
+        max_val: int,
+        step: int = 1,
+        bg: str = COLOR_CARD_BG,
+    ):
+        super().__init__(parent, bg=bg)
+        self.var = var
+        self.min_val = min_val
+        self.max_val = max_val
+        self.step = step
+
+        # Decrement button
+        self.btn_minus = tk.Button(
+            self,
+            text="<",
+            command=self._decrement,
+            bg=COLOR_INPUT_BG,
+            fg=COLOR_TEXT_PRIMARY,
+            font=(FONT_FAMILY, 11, "bold"),
+            relief="flat",
+            bd=0,
+            padx=8,
+            pady=2,
+            cursor="hand2",
+            activebackground=COLOR_BORDER,
+            activeforeground=COLOR_ACCENT_BLUE,
+            highlightthickness=0,
+        )
+        self.btn_minus.pack(side="left", padx=2)
+
+        # Value display entry box
+        vcmd = (self.register(self._validate_input), "%P")
+        self.val_entry = tk.Entry(
+            self,
+            textvariable=self.var,
+            font=(FONT_FAMILY, 10, "bold"),
+            bg=COLOR_INPUT_BG,
+            fg=COLOR_TEXT_PRIMARY,
+            insertbackground=COLOR_TEXT_PRIMARY,
+            width=4,
+            relief="flat",
+            justify="center",
+            validate="key",
+            validatecommand=vcmd,
+            highlightthickness=0,
+        )
+        self.val_entry.pack(side="left", padx=4, ipady=3)
+        self.val_entry.bind("<FocusOut>", self._on_focus_out)
+        self.val_entry.bind("<Return>", lambda e: self.focus())  # unfocus on enter
+
+        # Increment button
+        self.btn_plus = tk.Button(
+            self,
+            text=">",
+            command=self._increment,
+            bg=COLOR_INPUT_BG,
+            fg=COLOR_TEXT_PRIMARY,
+            font=(FONT_FAMILY, 11, "bold"),
+            relief="flat",
+            bd=0,
+            padx=8,
+            pady=2,
+            cursor="hand2",
+            activebackground=COLOR_BORDER,
+            activeforeground=COLOR_ACCENT_BLUE,
+            highlightthickness=0,
+        )
+        self.btn_plus.pack(side="left", padx=2)
+
+    def _validate_input(self, P):
+        """Only allow digits or empty string while typing."""
+        if P == "" or P.isdigit():
+            return True
+        return False
+
+    def _on_focus_out(self, event=None):
+        """Clamp the value to min/max when the user finishes editing."""
+        try:
+            val = self.var.get()
+            if val < self.min_val:
+                self.var.set(self.min_val)
+            elif val > self.max_val:
+                self.var.set(self.max_val)
+        except tk.TclError:
+            # If the field is empty or invalid (e.g. '-')
+            self.var.set(self.min_val)
+
+    def _decrement(self):
+        try:
+            val = self.var.get() - self.step
+        except tk.TclError:
+            val = self.min_val
+            
+        if val < self.min_val:
+            val = self.min_val
+        self.var.set(val)
+
+    def _increment(self):
+        try:
+            val = self.var.get() + self.step
+        except tk.TclError:
+            val = self.min_val
+            
+        if val > self.max_val:
+            val = self.max_val
+        self.var.set(val)
+
+
+class ModernToggle(tk.Canvas):
+    """Pill-shaped modern toggle switch control."""
+
+    def __init__(self, parent, var: tk.BooleanVar, bg=COLOR_CARD_BG, width=44, height=22):
+        super().__init__(
+            parent,
+            width=width,
+            height=height,
+            bg=bg,
+            highlightthickness=0,
+            bd=0,
+            cursor="hand2",
+        )
+        self.var = var
+        self.w = width
+        self.h = height
+
+        self.bind("<Button-1>", self._toggle)
+        self._draw()
+
+    def _draw(self):
+        self.delete("all")
+        is_on = self.var.get()
+        track_color = COLOR_ACCENT_BLUE if is_on else COLOR_INPUT_BG
+        knob_color = "#0b0e14" if is_on else COLOR_TEXT_MUTED
+
+        # Track
+        _create_rounded_polygon(
+            self, 1, 1, self.w - 1, self.h - 1, radius=11, fill=track_color, outline=COLOR_BORDER if not is_on else ""
+        )
+
+        # Knob circle
+        knob_x = self.w - 12 if is_on else 12
+        self.create_oval(knob_x - 7, self.h / 2 - 7, knob_x + 7, self.h / 2 + 7, fill=knob_color, outline="")
+
+    def _toggle(self, event=None):
+        self.var.set(not self.var.get())
+        self._draw()
 
 
 class WorkHealthTimer:
@@ -265,16 +499,17 @@ class WorkHealthTimer:
         look_min = max(0, int(look_remaining // 60))
         posture_min = max(0, int(posture_remaining // 60))
 
-        return f"👀 {look_min}min  |  🧘 {posture_min}min"
+        return f"👀 {look_min}min  |  ✨ {posture_min}min"
 
     def _show_settings(self) -> None:
         """Open the settings window."""
         self._ui_queue.put(self._create_settings_window)
 
     def _create_settings_window(self) -> None:
-        """Build and display the settings window using Tkinter."""
+        """Build and display the modernized settings window using Tkinter."""
         settings_win = tk.Toplevel(self.root)
-        settings_win.title(f"{APP_NAME} — Settings")
+        settings_win.withdraw()  # Hide window while building to prevent flashing
+        settings_win.title(f"{APP_NAME} — {i18n.t('settings_title')}")
         settings_win.configure(bg=COLOR_BG_DARK)
         settings_win.resizable(False, False)
         settings_win.wm_attributes("-topmost", True)
@@ -291,210 +526,280 @@ class WorkHealthTimer:
                 settings_win.iconbitmap(icon_path)
         except Exception as e:
             logger.error("Failed to load icon for settings window: %s", e)
-            
-        # NOTE: no transient(self.root) — the root window is withdrawn, and a
-        # transient of a hidden master stays withdrawn (invisible) on Windows.
 
-        # Center on screen
-        win_w, win_h = 420, 480
+        # Center window on screen with spacious modern dimensions
+        win_w, win_h = 480, 620
         screen_w = settings_win.winfo_screenwidth()
         screen_h = settings_win.winfo_screenheight()
         x = (screen_w - win_w) // 2
         y = (screen_h - win_h) // 2
         settings_win.geometry(f"{win_w}x{win_h}+{x}+{y}")
 
-        # Title
+        # ── Header Banner ─────────────────────────────────────────────
+        header_frame = tk.Frame(settings_win, bg=COLOR_BG_DARK)
+        header_frame.pack(fill="x", padx=25, pady=15)
+
         tk.Label(
-            settings_win,
+            header_frame,
             text=i18n.t("settings_title"),
             font=(FONT_FAMILY, 16, "bold"),
             bg=COLOR_BG_DARK,
             fg=COLOR_TEXT_PRIMARY,
-        ).pack(pady=(20, 15))
+            anchor="w",
+        ).pack(fill="x")
 
-        # Settings frame
-        frame = tk.Frame(settings_win, bg=COLOR_BG_DARK, padx=30)
-        frame.pack(fill="x")
+        tk.Label(
+            header_frame,
+            text=i18n.t("settings_subtitle"),
+            font=(FONT_FAMILY, 9),
+            bg=COLOR_BG_DARK,
+            fg=COLOR_TEXT_MUTED,
+            anchor="w",
+        ).pack(fill="x", pady=(2, 0))
 
-        # Helper to create labeled spinbox entries
-        entries = {}
+        # Main scrollable/container area
+        content_frame = tk.Frame(settings_win, bg=COLOR_BG_DARK)
+        content_frame.pack(fill="both", expand=True, padx=25)
 
-        def add_setting(parent, label_text: str, key: str, default, from_: int, to: int, row: int):
+        # ── Card 1: Timer Intervals ──────────────────────────────────
+        card_intervals = tk.Frame(
+            content_frame,
+            bg=COLOR_CARD_BG,
+            highlightbackground=COLOR_BORDER,
+            highlightthickness=1,
+            padx=18,
+            pady=14,
+        )
+        card_intervals.pack(fill="x", pady=10)
+
+        tk.Label(
+            card_intervals,
+            text=i18n.t("settings_sec_intervals"),
+            font=(FONT_FAMILY, 9, "bold"),
+            bg=COLOR_CARD_BG,
+            fg=COLOR_ACCENT_BLUE,
+            anchor="w",
+        ).pack(fill="x", pady=(0, 10))
+
+        grid_intervals = tk.Frame(card_intervals, bg=COLOR_CARD_BG)
+        grid_intervals.pack(fill="x")
+        grid_intervals.columnconfigure(0, weight=1)
+        grid_intervals.columnconfigure(1, weight=0)
+        grid_intervals.columnconfigure(2, weight=0)
+
+        # Variables for settings
+        look_away_var = tk.IntVar(value=self.config.get("look_away_interval_min", DEFAULT_LOOK_AWAY_INTERVAL_MIN))
+        posture_var = tk.IntVar(value=self.config.get("posture_interval_min", DEFAULT_POSTURE_INTERVAL_MIN))
+        # Idle threshold converted to MINUTES for UI
+        idle_sec_val = self.config.get("idle_threshold_sec", DEFAULT_IDLE_THRESHOLD_SEC)
+        idle_min_var = tk.IntVar(value=max(1, idle_sec_val // 60))
+        dismiss_var = tk.IntVar(value=self.config.get("alert_auto_dismiss_sec", DEFAULT_ALERT_AUTO_DISMISS_SEC))
+
+        def add_stepper_row(parent, label_text: str, var: tk.IntVar, min_val: int, max_val: int, unit_key: str, row: int, step: int = 1):
             tk.Label(
                 parent,
                 text=label_text,
-                font=(FONT_FAMILY, 11),
-                bg=COLOR_BG_DARK,
-                fg=COLOR_TEXT_SECONDARY,
-                anchor="w",
-            ).grid(row=row, column=0, sticky="w", pady=(10, 2))
-
-            var = tk.IntVar(value=self.config.get(key, default))
-            spinbox = tk.Spinbox(
-                parent,
-                from_=from_,
-                to=to,
-                textvariable=var,
-                width=8,
-                font=(FONT_FAMILY, 11),
-                bg=COLOR_BG_CARD,
+                font=(FONT_FAMILY, 10),
+                bg=COLOR_CARD_BG,
                 fg=COLOR_TEXT_PRIMARY,
-                buttonbackground=COLOR_BG_CARD,
-                relief="flat",
-                highlightthickness=1,
-                highlightcolor=COLOR_ACCENT_BLUE,
-                insertbackground=COLOR_TEXT_PRIMARY,
-            )
-            spinbox.grid(row=row, column=1, sticky="e", pady=(10, 2), padx=(10, 0))
-            entries[key] = var
+                anchor="w",
+            ).grid(row=row, column=0, sticky="w", pady=6)
 
-        frame.columnconfigure(0, weight=1)
-        frame.columnconfigure(1, weight=0)
+            stepper = ModernStepper(parent, var=var, min_val=min_val, max_val=max_val, step=step, bg=COLOR_CARD_BG)
+            stepper.grid(row=row, column=1, sticky="e", pady=6, padx=(10, 6))
 
-        add_setting(frame, i18n.t("settings_eye_rest"), "look_away_interval_min",
-                    DEFAULT_LOOK_AWAY_INTERVAL_MIN, 1, 120, 0)
-        add_setting(frame, i18n.t("settings_posture"), "posture_interval_min",
-                    DEFAULT_POSTURE_INTERVAL_MIN, 1, 240, 1)
-        add_setting(frame, i18n.t("settings_idle"), "idle_threshold_sec",
-                    DEFAULT_IDLE_THRESHOLD_SEC, 30, 600, 2)
-        add_setting(frame, i18n.t("settings_dismiss"), "alert_auto_dismiss_sec",
-                    DEFAULT_ALERT_AUTO_DISMISS_SEC, 5, 120, 3)
+            tk.Label(
+                parent,
+                text=i18n.t(unit_key),
+                font=(FONT_FAMILY, 9),
+                bg=COLOR_CARD_BG,
+                fg=COLOR_TEXT_MUTED,
+                anchor="w",
+            ).grid(row=row, column=2, sticky="w", pady=6)
 
-        # Checkboxes frame
-        checks_frame = tk.Frame(settings_win, bg=COLOR_BG_DARK, padx=30)
-        checks_frame.pack(fill="x", pady=(15, 0))
+        add_stepper_row(grid_intervals, i18n.t("settings_eye_rest"), look_away_var, 1, 120, "unit_min", 0)
+        add_stepper_row(grid_intervals, i18n.t("settings_posture"), posture_var, 1, 240, "unit_min", 1)
+        add_stepper_row(grid_intervals, i18n.t("settings_idle"), idle_min_var, 1, 30, "unit_min", 2)
+        add_stepper_row(grid_intervals, i18n.t("settings_dismiss"), dismiss_var, 5, 120, "unit_sec", 3, step=5)
 
-        sound_var = tk.BooleanVar(
-            value=self.config.get("sound_enabled", DEFAULT_SOUND_ENABLED)
+        # ── Card 2: Preferences & System ─────────────────────────────
+        card_prefs = tk.Frame(
+            content_frame,
+            bg=COLOR_CARD_BG,
+            highlightbackground=COLOR_BORDER,
+            highlightthickness=1,
+            padx=18,
+            pady=14,
         )
-        tk.Checkbutton(
-            checks_frame,
-            text=i18n.t("settings_sound"),
-            variable=sound_var,
-            font=(FONT_FAMILY, 11),
-            bg=COLOR_BG_DARK,
-            fg=COLOR_TEXT_SECONDARY,
-            selectcolor=COLOR_BG_CARD,
-            activebackground=COLOR_BG_DARK,
-            activeforeground=COLOR_TEXT_PRIMARY,
-            anchor="w",
-        ).pack(fill="x", pady=(5, 0))
+        card_prefs.pack(fill="x", pady=10)
 
-        auto_start_var = tk.BooleanVar(
-            value=self.config.get("auto_start", DEFAULT_AUTO_START)
-        )
-        tk.Checkbutton(
-            checks_frame,
-            text=i18n.t("settings_autostart"),
-            variable=auto_start_var,
-            font=(FONT_FAMILY, 11),
-            bg=COLOR_BG_DARK,
-            fg=COLOR_TEXT_SECONDARY,
-            selectcolor=COLOR_BG_CARD,
-            activebackground=COLOR_BG_DARK,
-            activeforeground=COLOR_TEXT_PRIMARY,
-            anchor="w",
-        ).pack(fill="x", pady=(5, 0))
-        
-        # Language Selector
-        lang_frame = tk.Frame(settings_win, bg=COLOR_BG_DARK, padx=30)
-        lang_frame.pack(fill="x", pady=(15, 0))
-        
         tk.Label(
-            lang_frame,
-            text=i18n.t("settings_language"),
-            font=(FONT_FAMILY, 11),
-            bg=COLOR_BG_DARK,
-            fg=COLOR_TEXT_SECONDARY,
+            card_prefs,
+            text=i18n.t("settings_sec_preferences"),
+            font=(FONT_FAMILY, 9, "bold"),
+            bg=COLOR_CARD_BG,
+            fg=COLOR_ACCENT_PURPLE,
+            anchor="w",
+        ).pack(fill="x", pady=5)
+
+        # Sound toggle row
+        sound_var = tk.BooleanVar(value=self.config.get("sound_enabled", DEFAULT_SOUND_ENABLED))
+        sound_row = tk.Frame(card_prefs, bg=COLOR_CARD_BG)
+        sound_row.pack(fill="x", pady=4)
+
+        tk.Label(
+            sound_row,
+            text=i18n.t("settings_sound"),
+            font=(FONT_FAMILY, 10),
+            bg=COLOR_CARD_BG,
+            fg=COLOR_TEXT_PRIMARY,
             anchor="w",
         ).pack(side="left")
-        
+
+        ModernToggle(sound_row, var=sound_var, bg=COLOR_CARD_BG).pack(side="right")
+
+        # Auto-start toggle row
+        auto_start_var = tk.BooleanVar(value=self.config.get("auto_start", DEFAULT_AUTO_START))
+        auto_row = tk.Frame(card_prefs, bg=COLOR_CARD_BG)
+        auto_row.pack(fill="x", pady=4)
+
+        tk.Label(
+            auto_row,
+            text=i18n.t("settings_autostart"),
+            font=(FONT_FAMILY, 10),
+            bg=COLOR_CARD_BG,
+            fg=COLOR_TEXT_PRIMARY,
+            anchor="w",
+        ).pack(side="left")
+
+        ModernToggle(auto_row, var=auto_start_var, bg=COLOR_CARD_BG).pack(side="right")
+
+        # Language dropdown row inside Card 2
+        lang_row = tk.Frame(card_prefs, bg=COLOR_CARD_BG)
+        lang_row.pack(fill="x", pady=(6, 2))
+
+        tk.Label(
+            lang_row,
+            text=i18n.t("settings_language"),
+            font=(FONT_FAMILY, 10),
+            bg=COLOR_CARD_BG,
+            fg=COLOR_TEXT_PRIMARY,
+            anchor="w",
+        ).pack(side="left")
+
         lang_var = tk.StringVar(value=self.config.get("language", "en"))
-        lang_options = {"English ▼": "en", "Español ▼": "es"}
-        
-        # Create an inverted mapping for OptionMenu
+        lang_options = {"English": "en", "Español": "es"}
         inv_lang_options = {v: k for k, v in lang_options.items()}
-        display_lang_var = tk.StringVar(value=inv_lang_options.get(lang_var.get(), "English ▼"))
-        
+        display_lang_var = tk.StringVar(value=inv_lang_options.get(lang_var.get(), "English"))
+
         def on_lang_change(val):
             lang_var.set(lang_options[val])
-            
+
         lang_menu = tk.OptionMenu(
-            lang_frame, 
-            display_lang_var, 
+            lang_row,
+            display_lang_var,
             *lang_options.keys(),
             command=on_lang_change
         )
         lang_menu.config(
-            bg=COLOR_BG_CARD,
+            bg=COLOR_INPUT_BG,
             fg=COLOR_TEXT_PRIMARY,
-            font=(FONT_FAMILY, 10),
+            font=(FONT_FAMILY, 9, "bold"),
             activebackground=COLOR_ACCENT_BLUE,
-            highlightthickness=0,
+            activeforeground="#000000",
+            highlightthickness=1,
+            highlightbackground=COLOR_BORDER,
             relief="flat",
             indicatoron=0,
-            padx=10,
-            pady=2,
+            padx=12,
+            pady=3,
             cursor="hand2"
         )
         lang_menu["menu"].config(
-            bg=COLOR_BG_CARD,
+            bg=COLOR_CARD_BG,
             fg=COLOR_TEXT_PRIMARY,
-            font=(FONT_FAMILY, 10)
+            activebackground=COLOR_ACCENT_BLUE,
+            activeforeground="#000000",
+            font=(FONT_FAMILY, 9)
         )
         lang_menu.pack(side="right")
 
-        # Save button
+        # ── Action Buttons Footer ─────────────────────────────────────
+        footer_frame = tk.Frame(settings_win, bg=COLOR_BG_DARK)
+        footer_frame.pack(fill="x", side="bottom", padx=25, pady=10)
+
         def save_settings():
-            for key, var in entries.items():
-                self.config.set(key, var.get())
+            self.config.set("look_away_interval_min", look_away_var.get())
+            self.config.set("posture_interval_min", posture_var.get())
+            # Convert idle threshold from minutes back to seconds for config
+            self.config.set("idle_threshold_sec", idle_min_var.get() * 60)
+            self.config.set("alert_auto_dismiss_sec", dismiss_var.get())
             self.config.set("sound_enabled", sound_var.get())
             self.config.set("auto_start", auto_start_var.get())
             self.config.set("language", lang_var.get())
             self.config.save()
             
-            # Apply language immediately for new UI elements
             i18n.set_language(lang_var.get())
-
-            # Reset counters so new intervals take effect cleanly
             self._active_seconds_look_away = 0.0
             self._active_seconds_posture = 0.0
-
-            # Apply auto-start
             self._sync_auto_start()
-            
-            # Refresh tray icon text
             self.tray._refresh_icon()
 
             logger.info("Settings saved.")
             settings_win.destroy()
 
-        save_btn = tk.Button(
-            settings_win,
-            text=i18n.t("settings_save"),
-            font=(FONT_FAMILY, 12, "bold"),
-            bg=COLOR_ACCENT_BLUE,
-            fg="#000000",
-            activebackground=COLOR_ACCENT_PURPLE,
-            activeforeground="#ffffff",
-            relief="flat",
-            cursor="hand2",
-            padx=30,
-            pady=10,
-            command=save_settings,
-        )
-        save_btn.pack(pady=(25, 10))
-        save_btn.bind("<Enter>", lambda e: save_btn.configure(bg=COLOR_ACCENT_PURPLE, fg="#ffffff"))
-        save_btn.bind("<Leave>", lambda e: save_btn.configure(bg=COLOR_ACCENT_BLUE, fg="#000000"))
+        btn_box = tk.Frame(footer_frame, bg=COLOR_BG_DARK)
+        btn_box.pack(fill="x")
 
-        # Version info
+        # Cancel button
+        cancel_btn = tk.Button(
+            btn_box,
+            text=i18n.t("settings_cancel"),
+            command=settings_win.destroy,
+            bg=COLOR_BUTTON_SECONDARY,
+            fg=COLOR_TEXT_SECONDARY,
+            font=(FONT_FAMILY, 10, "bold"),
+            relief="flat",
+            bd=0,
+            padx=20,
+            pady=8,
+            cursor="hand2",
+            activebackground=COLOR_BUTTON_SECONDARY_HOVER,
+            activeforeground=COLOR_TEXT_PRIMARY,
+            highlightthickness=0,
+        )
+        cancel_btn.pack(side="left", ipadx=10, ipady=4)
+
+        # Save button
+        save_btn = tk.Button(
+            btn_box,
+            text=i18n.t("settings_save"),
+            command=save_settings,
+            bg=COLOR_ACCENT_BLUE,
+            fg="#0b0e14",
+            font=(FONT_FAMILY, 10, "bold"),
+            relief="flat",
+            bd=0,
+            padx=20,
+            pady=8,
+            cursor="hand2",
+            activebackground=COLOR_ACCENT_HOVER,
+            activeforeground="#000000",
+            highlightthickness=0,
+        )
+        save_btn.pack(side="right", ipadx=10, ipady=4)
+
+        # Version tag
         tk.Label(
-            settings_win,
+            footer_frame,
             text=f"{APP_NAME} v{APP_VERSION}",
-            font=(FONT_FAMILY, 9),
+            font=(FONT_FAMILY, 8),
             bg=COLOR_BG_DARK,
-            fg="#555577",
-        ).pack(side="bottom", pady=(0, 10))
+            fg=COLOR_TEXT_MUTED,
+        ).pack(pady=(12, 0))
+
+        # Show the window once everything is built and positioned
+        settings_win.deiconify()
 
     # ── Auto-Start ──────────────────────────────────────────────────
 
