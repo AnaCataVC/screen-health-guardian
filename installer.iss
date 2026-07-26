@@ -4,7 +4,7 @@
 [Setup]
 ; App Information
 AppName=Work Health Timer
-AppVersion=1.0.0
+AppVersion=1.1.0
 AppPublisher=AnaCataVC
 AppCopyright=Copyright (C) 2026
 AppSupportURL=https://github.com/AnaCataVC/work-health-timer
