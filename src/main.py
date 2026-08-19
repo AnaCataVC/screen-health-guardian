@@ -1,6 +1,6 @@
-"""Work Health Timer — Entry point.
+"""Screen Health Guardian — Entry point.
 
-Launches the Work Health Timer application with logging configured.
+Launches the Screen Health Guardian application with logging configured.
 Run with pythonw.exe to hide the console window:
     pythonw.exe main.py
 """
@@ -15,7 +15,7 @@ import faulthandler
 # fault to a file next to the config so it can be diagnosed post-mortem.
 _crash_log = os.path.join(
     os.environ.get("APPDATA", os.path.expanduser("~")),
-    "WorkHealthTimer", "crash.log",
+    "ScreenHealthGuardian", "crash.log",
 )
 os.makedirs(os.path.dirname(_crash_log), exist_ok=True)
 _crash_fp = open(_crash_log, "w", encoding="utf-8")
@@ -31,7 +31,7 @@ else:
 sys.path.insert(0, _base_path)
 
 from constants import APP_NAME, get_config_dir
-from app import WorkHealthTimer
+from app import ScreenHealthGuardian
 
 
 def setup_logging() -> None:
@@ -74,7 +74,7 @@ def check_single_instance():
 
 
 def main() -> None:
-    """Initialize and run the Work Health Timer application."""
+    """Initialize and run the Screen Health Guardian application."""
     setup_logging()
     logger = logging.getLogger(__name__)
 
@@ -83,7 +83,7 @@ def main() -> None:
 
     try:
         logger.info("Starting %s...", APP_NAME)
-        app = WorkHealthTimer()
+        app = ScreenHealthGuardian()
         app.run()
     except Exception as e:
         logger.critical("Fatal error: %s", e, exc_info=True)

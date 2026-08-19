@@ -1,4 +1,4 @@
-"""Internationalization module for Work Health Timer."""
+"""Internationalization module for Screen Health Guardian."""
 
 import logging
 
@@ -17,7 +17,7 @@ _translations = {
         "alert_posture_title": "Check Your Posture",
         "alert_posture_msg": "Sit up straight! Shoulders back,\nfeet flat on the floor and screen at eye level.",
         "alert_posture_btn": "Posture corrected",
-        "alert_window_title": "Work Health Timer Alert",
+        "alert_window_title": "Screen Health Guardian Alert",
         
         # Tray Icon
         "tray_resume": "▶  Resume",
@@ -55,7 +55,7 @@ _translations = {
         "alert_posture_title": "Revisa tu postura",
         "alert_posture_msg": "¡Mantén la espalda recta! Hombros atrás,\npies apoyados en el suelo y la pantalla a la altura de los ojos.",
         "alert_posture_btn": "Postura corregida",
-        "alert_window_title": "Alerta de Work Health Timer",
+        "alert_window_title": "Alerta de Screen Health Guardian",
         
         # Tray Icon
         "tray_resume": "▶  Reanudar",

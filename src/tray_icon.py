@@ -11,7 +11,7 @@ logger = logging.getLogger(__name__)
 
 
 class TrayIcon:
-    """System tray icon for Work Health Timer.
+    """System tray icon for Screen Health Guardian.
     
     Provides a tray icon with a context menu for controlling the timer.
     Runs pystray in a daemon thread to avoid blocking the main Tkinter loop.
@@ -147,15 +147,15 @@ class TrayIcon:
         if self._icon is not None:
             self._icon.icon = self._create_icon_image()
             status = t('tray_status_paused') if self._is_paused else t('tray_status_active')
-            self._icon.title = f'Work Health Timer — {status}'
+            self._icon.title = f'Screen Health Guardian — {status}'
             self._icon.menu = self._build_menu()
 
     def start(self) -> None:
         """Start the tray icon in a daemon thread."""
         self._icon = pystray.Icon(
-            name='work_health_timer',
+            name='screen_health_guardian',
             icon=self._create_icon_image(),
-            title=f'Work Health Timer — {t("tray_status_active")}',
+            title=f'Screen Health Guardian — {t("tray_status_active")}',
             menu=self._build_menu(),
         )
 

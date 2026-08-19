@@ -7,9 +7,9 @@ export const defaultLang = 'es';
 
 export const ui = {
   es: {
-    'meta.title': 'Work Health Timer - Cuida tu salud al trabajar',
+    'meta.title': 'Screen Health Guardian - Cuida tu salud al trabajar',
     'badge.available': 'Disponible para Windows 10/11',
-    'hero.title': 'Work Health Timer',
+    'hero.title': 'Screen Health Guardian',
     'hero.subtitle': 'Cuida tu salud',
     'hero.description': 'Una aplicación de escritorio ligera que te envía alertas periódicas de salud mientras trabajas. Detecta tu actividad real para no interrumpirte si no estás en el PC.',
     'button.download': 'Descargar Instalador (.exe)',
@@ -27,9 +27,9 @@ export const ui = {
     'footer.dev': 'Desarrollado por',
   },
   en: {
-    'meta.title': 'Work Health Timer - Care for your health while working',
+    'meta.title': 'Screen Health Guardian - Care for your health while working',
     'badge.available': 'Available for Windows 10/11',
-    'hero.title': 'Work Health Timer',
+    'hero.title': 'Screen Health Guardian',
     'hero.subtitle': 'Care for your health',
     'hero.description': 'A lightweight desktop application that sends you periodic health alerts while you work. It detects your real activity so it won\'t interrupt you if you are away.',
     'button.download': 'Download Installer (.exe)',

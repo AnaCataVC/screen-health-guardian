@@ -1,4 +1,4 @@
-"""Configuration manager for the Work Health Timer application.
+"""Configuration manager for the Screen Health Guardian application.
 
 Handles loading, saving, and accessing user settings from a JSON file.
 Thread-safe and resilient to corrupted config files.
@@ -6,6 +6,7 @@ Thread-safe and resilient to corrupted config files.
 
 import json
 import logging
+import os
 import threading
 import winreg
 from typing import Any
@@ -72,23 +73,42 @@ class ConfigManager:
                         raise ValueError("Config root must be a JSON object")
                 logger.info("Configuration loaded from %s", self._path)
             except FileNotFoundError:
-                logger.info(
-                    "Config file not found. Creating defaults at %s",
-                    self._path,
-                )
-                self._data = dict(self._DEFAULTS)
+                # Check for legacy config in WorkHealthTimer folder for backward compatibility
+                app_data = os.environ.get('APPDATA', os.path.expanduser('~'))
+                legacy_config = os.path.join(app_data, 'WorkHealthTimer', 'config.json')
+                legacy_loaded = False
+
+                if os.path.exists(legacy_config):
+                    try:
+                        with open(legacy_config, "r", encoding="utf-8") as fh:
+                            legacy_data = json.load(fh)
+                            if isinstance(legacy_data, dict):
+                                self._data = {**self._DEFAULTS, **legacy_data}
+                                legacy_loaded = True
+                                logger.info("Migrated legacy configuration from %s to %s", legacy_config, self._path)
+                    except Exception as e:
+                        logger.warning("Failed to load legacy config: %s", e)
+
+                if not legacy_loaded:
+                    logger.info(
+                        "Config file not found. Creating defaults at %s",
+                        self._path,
+                    )
+                    self._data = dict(self._DEFAULTS)
                 
                 # Check if an installation language was set in registry
-                try:
-                    key = winreg.OpenKey(winreg.HKEY_CURRENT_USER, r"Software\WorkHealthTimer", 0, winreg.KEY_READ)
-                    lang, _ = winreg.QueryValueEx(key, "InstallLanguage")
-                    if lang == "spanish":
-                        self._data["language"] = "es"
-                    elif lang == "english":
-                        self._data["language"] = "en"
-                    winreg.CloseKey(key)
-                except FileNotFoundError:
-                    pass
+                for reg_subkey in [r"Software\ScreenHealthGuardian", r"Software\WorkHealthTimer"]:
+                    try:
+                        key = winreg.OpenKey(winreg.HKEY_CURRENT_USER, reg_subkey, 0, winreg.KEY_READ)
+                        lang, _ = winreg.QueryValueEx(key, "InstallLanguage")
+                        if lang == "spanish":
+                            self._data["language"] = "es"
+                        elif lang == "english":
+                            self._data["language"] = "en"
+                        winreg.CloseKey(key)
+                        break
+                    except FileNotFoundError:
+                        pass
                 
                 self._write()
             except (json.JSONDecodeError, ValueError) as exc:

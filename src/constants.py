@@ -1,10 +1,10 @@
-"""Default constants for the Work Health Timer application."""
+"""Default constants for the Screen Health Guardian application."""
 
 import os
 
 
 # Application metadata
-APP_NAME = "Work Health Timer"
+APP_NAME = "Screen Health Guardian"
 APP_VERSION = "1.1.0"
 
 # Default timer intervals (in minutes)
@@ -26,7 +26,7 @@ DEFAULT_AUTO_START = False
 
 # Windows Registry (auto-start)
 REGISTRY_KEY = r"Software\Microsoft\Windows\CurrentVersion\Run"
-REGISTRY_VALUE_NAME = "WorkHealthTimer"
+REGISTRY_VALUE_NAME = "ScreenHealthGuardian"
 
 # Default Language
 DEFAULT_LANGUAGE = 'en'
@@ -36,7 +36,7 @@ DEFAULT_LANGUAGE = 'en'
 def get_config_dir() -> str:
     """Get the configuration directory path. Uses APPDATA on Windows."""
     app_data = os.environ.get('APPDATA', os.path.expanduser('~'))
-    config_dir = os.path.join(app_data, 'WorkHealthTimer')
+    config_dir = os.path.join(app_data, 'ScreenHealthGuardian')
     os.makedirs(config_dir, exist_ok=True)
     return config_dir
 

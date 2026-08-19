@@ -1,5 +1,5 @@
 @echo off
-REM Work Health Timer - Run without console window
+REM Screen Health Guardian - Run without console window
 REM This script launches the timer using pythonw.exe (no terminal visible)
 
 REM Check if virtual environment exists and activate it

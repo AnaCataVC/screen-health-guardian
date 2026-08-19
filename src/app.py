@@ -1,4 +1,4 @@
-"""Work Health Timer — Main application orchestrator.
+"""Screen Health Guardian — Main application orchestrator.
 
 Manages two independent activity timers (eye rest and posture correction),
 detects user idle time via Windows API, and shows overlay alerts when
@@ -261,7 +261,7 @@ class ModernToggle(tk.Canvas):
         self._draw()
 
 
-class WorkHealthTimer:
+class ScreenHealthGuardian:
     """Main application class that orchestrates all components.
 
     Architecture:

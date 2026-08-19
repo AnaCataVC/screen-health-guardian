@@ -1,4 +1,4 @@
-# Work Health Timer 🩺
+# Screen Health Guardian 🛡️
 
 ![Python](https://img.shields.io/badge/Python-3.11-3776AB?style=flat-square&logo=python&logoColor=white)
 ![Windows](https://img.shields.io/badge/Windows-10%2F11-0078D6?style=flat-square&logo=windows&logoColor=white)
@@ -31,15 +31,15 @@ A lightweight Windows desktop application that sends periodic health alerts whil
 ### Installation
 
 #### Option 1: Download the Installer (Recommended)
-1. Download `WorkHealthTimer-Setup.exe` from the [Releases](../../releases) page.
+1. Download `ScreenHealthGuardian-Setup.exe` from the [Releases](../../releases) page.
 2. Run the installer and follow the instructions.
-3. A heart icon will appear in your system tray automatically. Right-click the tray icon → **Settings** to customize intervals.
+3. An icon will appear in your system tray automatically. Right-click the tray icon → **Settings** to customize intervals.
 
 #### Option 2: Run from Source
 ```bash
 # Clone the repository
 git clone <repo-url>
-cd work-health-timer
+cd screen-health-guardian
 
 # Install dependencies
 pip install -r requirements.txt
@@ -60,11 +60,11 @@ pip install pyinstaller
 # Run the build script
 build.bat
 ```
-The script will first compile the Python code and then generate the professional installer at `dist/WorkHealthTimer-Setup.exe`.
+The script will first compile the Python code and then generate the professional installer at `dist/ScreenHealthGuardian-Setup.exe`.
 
 ### Configuration
 
-Settings are stored in `%APPDATA%/WorkHealthTimer/config.json` and can be edited via the Settings window (right-click tray icon → ⚙ Settings).
+Settings are stored in `%APPDATA%/ScreenHealthGuardian/config.json` and can be edited via the Settings window (right-click tray icon → ⚙ Settings).
 
 | Setting | Default | Description |
 |---|---|---|
@@ -96,7 +96,7 @@ Building this project provided valuable insights into developing desktop applica
 
 ### Project Structure
 ```text
-work-health-timer/
+screen-health-guardian/
 ├── src/
 │   ├── main.py            # Entry point with logging setup
 │   ├── app.py             # Main orchestrator class
@@ -104,7 +104,9 @@ work-health-timer/
 │   ├── alert_overlay.py   # Tkinter overlay alert windows
 │   ├── tray_icon.py       # System tray icon (pystray)
 │   ├── config_manager.py  # JSON config load/save
-│   └── constants.py       # Default values and color theme
+│   ├── constants.py       # Default values and color theme
+│   ├── i18n.py            # Localized UI text strings (EN/ES)
+│   └── ui_utils.py        # Reusable UI components & dialog helpers
 ├── requirements.txt       # Python dependencies
 ├── build.bat              # PyInstaller build script
 ├── run.bat                # Run without console (dev mode)
@@ -135,15 +137,15 @@ Una aplicación de escritorio ligera para Windows que envía alertas periódicas
 ### Instalación
 
 #### Opción 1: Descargar el Instalador (Recomendado)
-1. Descarga `WorkHealthTimer-Setup.exe` desde la página de [Releases](../../releases).
+1. Descarga `ScreenHealthGuardian-Setup.exe` desde la página de [Releases](../../releases).
 2. Ejecuta el instalador y sigue las instrucciones.
-3. Un ícono de corazón aparecerá en la bandeja del sistema. Haz clic derecho en él → **Settings** para personalizar los intervalos.
+3. Un ícono aparecerá en la bandeja del sistema. Haz clic derecho en él → **Settings** para personalizar los intervalos.
 
 #### Opción 2: Ejecutar desde el Código Fuente
 ```bash
 # Clonar el repositorio
 git clone <repo-url>
-cd work-health-timer
+cd screen-health-guardian
 
 # Instalar dependencias
 pip install -r requirements.txt
@@ -164,11 +166,11 @@ pip install pyinstaller
 # Ejecutar el script de construcción
 build.bat
 ```
-El script primero compilará el código Python y luego generará el instalador profesional en `dist/WorkHealthTimer-Setup.exe`.
+El script primero compilará el código Python y luego generará el instalador profesional en `dist/ScreenHealthGuardian-Setup.exe`.
 
 ### Configuración
 
-Los ajustes se guardan en `%APPDATA%/WorkHealthTimer/config.json` y se pueden editar a través de la ventana de Ajustes (clic derecho en el ícono de bandeja → ⚙ Settings).
+Los ajustes se guardan en `%APPDATA%/ScreenHealthGuardian/config.json` y se pueden editar a través de la ventana de Ajustes (clic derecho en el ícono de bandeja → ⚙ Settings).
 
 | Ajuste | Por Defecto | Descripción |
 |---|---|---|
@@ -200,7 +202,7 @@ Desarrollar este proyecto ofreció grandes enseñanzas sobre la creación de apl
 
 ### Estructura del Proyecto
 ```text
-work-health-timer/
+screen-health-guardian/
 ├── src/
 │   ├── main.py            # Entry point with logging setup
 │   ├── app.py             # Main orchestrator class
@@ -208,7 +210,9 @@ work-health-timer/
 │   ├── alert_overlay.py   # Tkinter overlay alert windows
 │   ├── tray_icon.py       # System tray icon (pystray)
 │   ├── config_manager.py  # JSON config load/save
-│   └── constants.py       # Default values and color theme
+│   ├── constants.py       # Default values and color theme
+│   ├── i18n.py            # Localized UI text strings (EN/ES)
+│   └── ui_utils.py        # Reusable UI components & dialog helpers
 ├── requirements.txt       # Python dependencies
 ├── build.bat              # PyInstaller build script
 ├── run.bat                # Run without console (dev mode)

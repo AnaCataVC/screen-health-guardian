@@ -1,5 +1,5 @@
 @echo off
-REM Work Health Timer — Build script
+REM Screen Health Guardian — Build script
 REM 1. Compiles Python to a directory (better performance)
 REM 2. Compiles Inno Setup script to a final Setup.exe (if installed)
 
@@ -11,7 +11,7 @@ python -m PyInstaller ^
     --onedir ^
     --noconfirm ^
     --windowed ^
-    --name "WorkHealthTimer" ^
+    --name "ScreenHealthGuardian" ^
     --icon "icon.ico" ^
     --add-data "icon.ico;." ^
     --paths src ^
@@ -39,16 +39,16 @@ if exist "%ISCC%" (
         echo ❌ Installer build failed.
     ) else (
         echo ✅ Installer built successfully!
-        echo    Location: dist\WorkHealthTimer-Setup.exe
+        echo    Location: dist\ScreenHealthGuardian-Setup.exe
         echo 🧹 Cleaning up portable directory...
-        rmdir /s /q "dist\WorkHealthTimer"
+        rmdir /s /q "dist\ScreenHealthGuardian"
     )
 ) else (
     echo ⚠️ Inno Setup Compiler ISCC.exe not found.
     echo Please install Inno Setup 6 from https://jrsoftware.org/isdl.php
     echo to generate the professional installer.
     echo.
-    echo The portable version is still available at dist\WorkHealthTimer\WorkHealthTimer.exe
+    echo The portable version is still available at dist\ScreenHealthGuardian\ScreenHealthGuardian.exe
 )
 
 echo.
