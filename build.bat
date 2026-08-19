@@ -14,6 +14,7 @@ python -m PyInstaller ^
     --name "ScreenHealthGuardian" ^
     --icon "icon.ico" ^
     --add-data "icon.ico;." ^
+    --add-data "icon.png;." ^
     --paths src ^
     --hidden-import pystray._win32 ^
     src\main.py

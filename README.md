@@ -22,7 +22,7 @@ A lightweight Windows desktop application that sends periodic health alerts whil
 | 🧘 **Posture Check** | 60 minutes | Sit up straight reminder |
 
 - **Activity Detection**: Only counts active time (keyboard/mouse). If you're idle for 2+ minutes, timers pause automatically.
-- **System Tray**: Heart icon in the notification area with a menu to pause, configure, or quit.
+- **System Tray**: Notification area icon with a contextual menu to pause, configure, or quit.
 - **Configurable**: All intervals, idle threshold, sound, and auto-start are adjustable via the Settings window.
 - **Auto-Start with Windows**: Optional — configurable from Settings.
 - **Sound Alerts**: Optional notification sound (disabled by default).
@@ -128,7 +128,7 @@ Una aplicación de escritorio ligera para Windows que envía alertas periódicas
 | 🧘 **Postura** | 60 minutos | Recordatorio para mantener la espalda recta |
 
 - **Detección de Actividad**: Solo cuenta el tiempo de actividad (teclado/ratón). Si no hay actividad por más de 2 minutos, los temporizadores se pausan automáticamente.
-- **Bandeja del Sistema**: Ícono de corazón en el área de notificaciones con un menú para pausar, configurar o salir.
+- **Bandeja del Sistema**: Ícono en el área de notificaciones con un menú contextual para pausar, configurar o salir.
 - **Configurable**: Todos los intervalos, umbral de inactividad, sonido y auto-inicio son ajustables desde la ventana de Ajustes.
 - **Auto-Inicio con Windows**: Opcional — configurable desde Ajustes.
 - **Alertas Sonoras**: Sonido de notificación opcional (desactivado por defecto).

@@ -56,11 +56,11 @@ class TrayIcon:
             else:
                 base_path = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
                 
-            icon_path = os.path.join(base_path, "icon.ico")
-            if os.path.exists(icon_path):
-                img = Image.open(icon_path)
-                # Resize if necessary, pystray handles scaling, but usually we just return it
-                return img
+            for icon_name in ("icon.png", "icon.ico"):
+                icon_path = os.path.join(base_path, icon_name)
+                if os.path.exists(icon_path):
+                    img = Image.open(icon_path)
+                    return img
         except Exception as e:
             logger.error(f"Failed to load icon from disk: {e}")
 
