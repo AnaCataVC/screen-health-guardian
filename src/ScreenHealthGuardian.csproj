@@ -1,0 +1,28 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UseWPF>true</UseWPF>
+    <ApplicationIcon>..\icon.ico</ApplicationIcon>
+    <RootNamespace>ScreenHealthGuardian</RootNamespace>
+    <AssemblyName>ScreenHealthGuardian</AssemblyName>
+    <Version>1.0.0</Version>
+    <Authors>AnaCataVC</Authors>
+    <Company>ScreenHealthGuardian</Company>
+    <Product>Screen Health Guardian</Product>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="H.NotifyIcon.Wpf" Version="2.1.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="..\icon.ico" Link="Assets\icon.ico">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+  </ItemGroup>
+
+</Project>

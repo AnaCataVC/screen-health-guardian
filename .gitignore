@@ -4,10 +4,14 @@ __pycache__/
 *$py.class
 *.so
 
-# PyInstaller & Releases
+# Build Outputs & Releases
 build/
 dist/
 releases/
+bin/
+obj/
+src/bin/
+src/obj/
 *.spec
 
 # Virtual environment

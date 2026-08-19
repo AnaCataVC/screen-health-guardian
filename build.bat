@@ -1,56 +1,52 @@
 @echo off
-REM Screen Health Guardian — Build script
-REM 1. Compiles Python to a directory (better performance)
-REM 2. Compiles Inno Setup script to a final Setup.exe (if installed)
+setlocal enabledelayedexpansion
 
-echo ===========================================
-echo 1. Building Python Executable (Directory Mode)
-echo ===========================================
+echo ===================================================
+echo   Screen Health Guardian - Build Script (.NET 9)
+echo ===================================================
 
-python -m PyInstaller ^
-    --onedir ^
-    --noconfirm ^
-    --windowed ^
-    --name "ScreenHealthGuardian" ^
-    --icon "icon.ico" ^
-    --add-data "icon.ico;." ^
-    --add-data "icon.png;." ^
-    --paths src ^
-    --hidden-import pystray._win32 ^
-    src\main.py
+where dotnet >nul 2>&1
+if %ERRORLEVEL% NEQ 0 (
+    if exist "%LOCALAPPDATA%\Microsoft\dotnet\dotnet.exe" (
+        set "DOTNET_ROOT=%LOCALAPPDATA%\Microsoft\dotnet"
+        set "PATH=%LOCALAPPDATA%\Microsoft\dotnet;%PATH%"
+    ) else (
+        echo [ERROR] .NET SDK is not found.
+        echo Install .NET SDK with: winget install Microsoft.DotNet.SDK.9
+        exit /b 1
+    )
+)
+
+echo [1/3] Restoring NuGet dependencies...
+dotnet restore src\ScreenHealthGuardian.csproj
+if %ERRORLEVEL% NEQ 0 (
+    echo [ERROR] Failed to restore packages.
+    exit /b 1
+)
+
+echo [2/3] Publishing standalone executable (Release win-x64)...
+dotnet publish src\ScreenHealthGuardian.csproj ^
+    -c Release ^
+    -r win-x64 ^
+    --self-contained true ^
+    -p:PublishSingleFile=true ^
+    -p:IncludeNativeLibrariesForSelfExtract=true ^
+    -p:EnableCompressionInSingleFile=true ^
+    -o releases\win-x64
 
 if %ERRORLEVEL% NEQ 0 (
-    echo ❌ PyInstaller build failed. Check the output above.
-    pause
-    exit /b %ERRORLEVEL%
+    echo [ERROR] Dotnet publish failed.
+    exit /b 1
 )
 
-echo ✅ PyInstaller build successful!
-echo.
-
-echo ===========================================
-echo 2. Building Setup Installer (Inno Setup)
-echo ===========================================
-
+echo [3/3] Compiling Inno Setup installer...
 set "ISCC=C:\Program Files (x86)\Inno Setup 6\ISCC.exe"
-
 if exist "%ISCC%" (
-    "%ISCC%" "installer.iss"
-    if errorlevel 1 (
-        echo ❌ Installer build failed.
-    ) else (
-        echo ✅ Installer built successfully!
-        echo    Location: dist\ScreenHealthGuardian-Setup.exe
-        echo 🧹 Cleaning up portable directory...
-        rmdir /s /q "dist\ScreenHealthGuardian"
-    )
+    "%ISCC%" installer.iss
+    echo [SUCCESS] Installer generated in releases\
 ) else (
-    echo ⚠️ Inno Setup Compiler ISCC.exe not found.
-    echo Please install Inno Setup 6 from https://jrsoftware.org/isdl.php
-    echo to generate the professional installer.
-    echo.
-    echo The portable version is still available at dist\ScreenHealthGuardian\ScreenHealthGuardian.exe
+    echo [INFO] Inno Setup compiler not found at default path.
+    echo Standalone binary is ready at: releases\win-x64\ScreenHealthGuardian.exe
 )
 
-echo.
-echo Build process complete.
+echo ===================================================
