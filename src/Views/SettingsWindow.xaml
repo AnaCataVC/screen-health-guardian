@@ -275,23 +275,14 @@
                     Grid.Column="1"
                     Content="Cancel"
                     Click="BtnCancel_Click"
-                    Background="#21262d"
-                    Foreground="#c9d1d9"
-                    BorderThickness="0"
-                    Padding="16,6"
-                    Margin="0,0,10,0"
-                    Cursor="Hand" />
+                    Style="{StaticResource ModernDarkButton}"
+                    Margin="0,0,10,0" />
 
             <Button x:Name="BtnSave"
                     Grid.Column="2"
                     Content="Save Preferences"
                     Click="BtnSave_Click"
-                    Background="#4fc3f7"
-                    Foreground="#0b0e14"
-                    FontWeight="Bold"
-                    BorderThickness="0"
-                    Padding="18,6"
-                    Cursor="Hand" />
+                    Style="{StaticResource ModernPrimaryButton}" />
         </Grid>
     </Grid>
 </Window>

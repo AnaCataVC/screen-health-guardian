@@ -77,21 +77,11 @@
                     Grid.Row="3"
                     Content="I'm looking away (Done)"
                     Click="DismissButton_Click"
-                    Background="#27294d"
-                    Foreground="#ffffff"
-                    FontFamily="Segoe UI"
-                    FontWeight="Bold"
-                    FontSize="12"
+                    Style="{StaticResource ModernDarkButton}"
                     Padding="28,10"
-                    BorderThickness="0"
-                    HorizontalAlignment="Center"
-                    Cursor="Hand">
-                <Button.Resources>
-                    <Style TargetType="Border">
-                        <Setter Property="CornerRadius" Value="8" />
-                    </Style>
-                </Button.Resources>
-            </Button>
+                    FontSize="12"
+                    FontWeight="Bold"
+                    HorizontalAlignment="Center" />
 
             <!-- Progress countdown bar -->
             <ProgressBar x:Name="AutoDismissProgress"
