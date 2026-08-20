@@ -9,7 +9,7 @@
     <ApplicationIcon>..\icon.ico</ApplicationIcon>
     <RootNamespace>ScreenHealthGuardian</RootNamespace>
     <AssemblyName>ScreenHealthGuardian</AssemblyName>
-    <Version>1.0.0</Version>
+    <Version>2.0.0</Version>
     <Authors>AnaCataVC</Authors>
     <Company>ScreenHealthGuardian</Company>
     <Product>Screen Health Guardian</Product>

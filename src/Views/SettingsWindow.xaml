@@ -266,7 +266,7 @@
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
 
-            <TextBlock Text="Screen Health Guardian v1.0.0"
+            <TextBlock Text="Screen Health Guardian v2.0.0"
                        VerticalAlignment="Center"
                        FontSize="10"
                        Foreground="#484f58" />
