@@ -7,7 +7,7 @@ const t = useTranslations(lang);
 <main class="max-w-5xl mx-auto px-6 py-20 flex flex-col items-center text-center">
   <!-- Hero Section -->
   <header class="animate-fade-in-up mt-10 md:mt-20">
-    <div class="inline-flex items-center justify-center px-4 py-1.5 mb-8 text-sm font-medium rounded-full glass text-sky-400 border-sky-500/30">
+    <div class="inline-flex items-center justify-center px-4 py-1.5 mb-8 text-sm font-medium rounded-full glass text-sky-400 border-sky-500/30 shadow-[0_0_15px_rgba(14,165,233,0.15)]">
       <span class="relative flex h-2 w-2 mr-2">
         <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-sky-400 opacity-75"></span>
         <span class="relative inline-flex rounded-full h-2 w-2 bg-sky-500"></span>
@@ -15,7 +15,7 @@ const t = useTranslations(lang);
       {t('badge.available')}
     </div>
     
-    <img src="/icon.png" alt="Screen Health Guardian Logo" class="w-24 h-24 mx-auto mb-6 drop-shadow-[0_0_20px_rgba(14,165,233,0.4)]" />
+    <img src="/icon.png" alt="Screen Health Guardian Logo" class="w-24 h-24 mx-auto mb-6 drop-shadow-[0_0_20px_rgba(14,165,233,0.4)] transition-transform hover:scale-105 duration-300" />
 
     <h1 class="text-5xl md:text-7xl font-bold tracking-tight mb-6 bg-gradient-to-br from-white to-slate-400 bg-clip-text text-transparent">
       {t('hero.title')} <br/> 
@@ -29,7 +29,7 @@ const t = useTranslations(lang);
     </p>
     
     <div class="flex flex-col sm:flex-row gap-4 justify-center">
-      <a href="https://github.com/AnaCataVC/screen-health-guardian/releases" class="px-8 py-4 rounded-xl font-semibold bg-sky-500 text-white hover:bg-sky-400 transition-colors shadow-[0_0_20px_rgba(14,165,233,0.3)] hover:shadow-[0_0_30px_rgba(14,165,233,0.5)] transform hover:-translate-y-1 duration-200">
+      <a href="https://github.com/AnaCataVC/screen-health-guardian/releases" class="px-8 py-4 rounded-xl font-semibold bg-sky-500 text-white hover:bg-sky-400 transition-all shadow-[0_0_20px_rgba(14,165,233,0.3)] hover:shadow-[0_0_30px_rgba(14,165,233,0.5)] transform hover:-translate-y-1 duration-200">
         {t('button.download')}
       </a>
       <a href="https://github.com/AnaCataVC/screen-health-guardian" target="_blank" class="px-8 py-4 rounded-xl font-semibold glass glass-hover transition-all text-white flex items-center justify-center gap-2 transform hover:-translate-y-1 duration-200">
@@ -42,8 +42,8 @@ const t = useTranslations(lang);
   <!-- Content Section -->
   <section class="mt-20 md:mt-32 w-full animate-fade-in-up flex flex-col gap-20 md:gap-32" style="animation-delay: 0.2s; animation-fill-mode: both;">
     
-    <!-- Feature 1: Eyes -->
-    <div class={`grid grid-cols-1 ${lang === 'es' ? 'lg:grid-cols-2' : ''} gap-8 lg:gap-16 items-center`}>
+    <!-- Feature 1: Eyes with WPF Overlay Mockup -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-16 items-center">
       <div class="order-2 lg:order-1 w-full">
         <div class="glass p-6 md:p-12 rounded-3xl flex flex-col gap-6 text-left relative overflow-hidden group border border-slate-700/50 hover:border-blue-500/30 transition-colors">
           <div class="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-transparent opacity-100"></div>
@@ -54,26 +54,93 @@ const t = useTranslations(lang);
           <p class="relative z-10 text-slate-400 leading-relaxed text-lg">{t('feature1.desc')}</p>
         </div>
       </div>
-      {lang === 'es' && (
+      
+      <!-- Mockup 1: WPF Alert Overlay (Eye Rest) -->
       <div class="order-1 lg:order-2 w-full">
-        <div class="glass p-2 md:p-4 rounded-3xl relative overflow-hidden w-full mx-auto border border-slate-700/50 shadow-2xl">
-          <div class="absolute inset-0 bg-gradient-to-tr from-blue-500/10 via-transparent to-transparent opacity-50"></div>
-          <img src="/eyes.png" alt={t('feature1.title')} class="w-full h-auto rounded-2xl relative z-10 shadow-lg border border-slate-800/80" />
+        <div class="relative p-1 rounded-3xl bg-gradient-to-b from-sky-500/20 to-blue-500/5 shadow-2xl">
+          <div class="bg-[#0f0f23]/95 backdrop-blur-xl border border-[#292b4a] rounded-[22px] p-6 sm:p-8 text-center flex flex-col items-center justify-center relative overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.6)]">
+            
+            <!-- Window subtle glow -->
+            <div class="absolute -top-10 left-1/2 -translate-x-1/2 w-40 h-20 bg-sky-500/10 blur-2xl rounded-full pointer-events-none"></div>
+
+            <!-- Emoji -->
+            <div class="text-5xl mb-3 select-none transform hover:scale-110 transition-transform">
+              👀
+            </div>
+
+            <!-- Title -->
+            <h3 class="text-xl sm:text-2xl font-bold text-[#4fc3f7] mb-2 font-sans tracking-wide">
+              {t('mockup.eyes.title')}
+            </h3>
+
+            <!-- Message -->
+            <p class="text-xs sm:text-sm text-[#b0bec5] max-w-sm mb-6 leading-relaxed">
+              {t('mockup.eyes.msg')}
+            </p>
+
+            <!-- WPF Dark Button -->
+            <div class="w-full max-w-xs">
+              <button type="button" class="w-full py-2.5 px-6 rounded-lg font-bold text-xs sm:text-sm text-white bg-[#21262d] hover:bg-[#30363d] border border-[#388bfd] hover:border-[#4fc3f7] transition-all shadow-md active:scale-98 cursor-default">
+                {t('mockup.eyes.btn')}
+              </button>
+            </div>
+
+            <!-- Animated Auto-dismiss Progress Bar -->
+            <div class="w-full bg-[#1b1c36] h-1.5 rounded-full mt-6 overflow-hidden relative">
+              <div class="bg-[#4fc3f7] h-full rounded-full w-2/3 shadow-[0_0_10px_#4fc3f7] animate-pulse"></div>
+            </div>
+            <div class="flex justify-between w-full mt-1.5 text-[10px] text-slate-500 font-mono">
+              <span>Auto-dismiss in 20s</span>
+              <span>WPF Overlay</span>
+            </div>
+          </div>
         </div>
       </div>
-      )}
     </div>
 
-    <!-- Feature 2: Posture -->
-    <div class={`grid grid-cols-1 ${lang === 'es' ? 'lg:grid-cols-2' : ''} gap-8 lg:gap-16 items-center`}>
-      {lang === 'es' && (
+    <!-- Feature 2: Posture with WPF Overlay Mockup -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-16 items-center">
+      <!-- Mockup 2: WPF Alert Overlay (Posture) -->
       <div class="order-1 w-full">
-        <div class="glass p-2 md:p-4 rounded-3xl relative overflow-hidden w-full mx-auto border border-slate-700/50 shadow-2xl">
-          <div class="absolute inset-0 bg-gradient-to-tr from-transparent via-transparent to-sky-500/10 opacity-50"></div>
-          <img src="/posture.png" alt={t('feature2.title')} class="w-full h-auto rounded-2xl relative z-10 shadow-lg border border-slate-800/80" />
+        <div class="relative p-1 rounded-3xl bg-gradient-to-b from-sky-500/20 to-teal-500/5 shadow-2xl">
+          <div class="bg-[#0f0f23]/95 backdrop-blur-xl border border-[#292b4a] rounded-[22px] p-6 sm:p-8 text-center flex flex-col items-center justify-center relative overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.6)]">
+            
+            <div class="absolute -top-10 left-1/2 -translate-x-1/2 w-40 h-20 bg-teal-500/10 blur-2xl rounded-full pointer-events-none"></div>
+
+            <!-- Emoji -->
+            <div class="text-5xl mb-3 select-none transform hover:scale-110 transition-transform">
+              🧘
+            </div>
+
+            <!-- Title -->
+            <h3 class="text-xl sm:text-2xl font-bold text-[#4fc3f7] mb-2 font-sans tracking-wide">
+              {t('mockup.posture.title')}
+            </h3>
+
+            <!-- Message -->
+            <p class="text-xs sm:text-sm text-[#b0bec5] max-w-sm mb-6 leading-relaxed">
+              {t('mockup.posture.msg')}
+            </p>
+
+            <!-- WPF Dark Button -->
+            <div class="w-full max-w-xs">
+              <button type="button" class="w-full py-2.5 px-6 rounded-lg font-bold text-xs sm:text-sm text-white bg-[#21262d] hover:bg-[#30363d] border border-[#388bfd] hover:border-[#4fc3f7] transition-all shadow-md active:scale-98 cursor-default">
+                {t('mockup.posture.btn')}
+              </button>
+            </div>
+
+            <!-- Auto-dismiss countdown bar -->
+            <div class="w-full bg-[#1b1c36] h-1.5 rounded-full mt-6 overflow-hidden relative">
+              <div class="bg-[#4fc3f7] h-full rounded-full w-4/5 shadow-[0_0_10px_#4fc3f7]"></div>
+            </div>
+            <div class="flex justify-between w-full mt-1.5 text-[10px] text-slate-500 font-mono">
+              <span>Interval: 45 min</span>
+              <span>Hardware-Accelerated</span>
+            </div>
+          </div>
         </div>
       </div>
-      )}
+
       <div class="order-2 w-full">
         <div class="glass p-6 md:p-12 rounded-3xl flex flex-col gap-6 text-left relative overflow-hidden group border border-slate-700/50 hover:border-sky-500/30 transition-colors">
           <div class="absolute inset-0 bg-gradient-to-br from-sky-500/5 to-transparent opacity-100"></div>
@@ -86,8 +153,8 @@ const t = useTranslations(lang);
       </div>
     </div>
 
-    <!-- Feature 3: Configuration & Smart Detection -->
-    <div class={`grid grid-cols-1 ${lang === 'es' ? 'lg:grid-cols-2' : ''} gap-8 lg:gap-16 items-center`}>
+    <!-- Feature 3: Configuration & Smart Detection with Settings Window Mockup -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-16 items-center">
       <div class="order-2 lg:order-1 w-full">
         <div class="glass p-6 md:p-12 rounded-3xl flex flex-col gap-6 text-left relative overflow-hidden group border border-slate-700/50 hover:border-purple-500/30 transition-colors">
           <div class="absolute inset-0 bg-gradient-to-br from-purple-500/5 to-transparent opacity-100"></div>
@@ -100,21 +167,95 @@ const t = useTranslations(lang);
           <p class="relative z-10 text-slate-400 leading-relaxed text-lg">{t('feature3.desc')}</p>
         </div>
       </div>
-      {lang === 'es' && (
+
+      <!-- Mockup 3: WPF Fluent Settings Window -->
       <div class="order-1 lg:order-2 w-full">
-        <div class="glass p-2 md:p-4 rounded-3xl relative overflow-hidden max-w-sm w-full mx-auto lg:mx-0 border border-slate-700/50 shadow-2xl">
-          <div class="absolute inset-0 bg-gradient-to-tr from-purple-500/10 via-transparent to-transparent opacity-50"></div>
-          <img src="/config.png" alt={t('config.title')} class="w-full h-auto rounded-2xl relative z-10 shadow-lg border border-slate-800/80" />
+        <div class="relative p-1 rounded-3xl bg-gradient-to-b from-purple-500/20 to-blue-500/5 shadow-2xl">
+          <div class="bg-[#0b0e14] border border-[#30363d] rounded-[22px] p-5 sm:p-6 text-left relative overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.6)] font-sans text-xs sm:text-sm">
+            
+            <!-- Window Title Bar -->
+            <div class="flex items-center justify-between pb-3 mb-4 border-b border-slate-800/80">
+              <div class="flex items-center gap-2">
+                <img src="/icon.png" class="w-4 h-4" alt="Icon" />
+                <span class="text-white font-semibold text-xs">{t('mockup.settings.title')}</span>
+              </div>
+              <div class="flex gap-1.5">
+                <span class="w-2.5 h-2.5 rounded-full bg-slate-700"></span>
+                <span class="w-2.5 h-2.5 rounded-full bg-slate-700"></span>
+                <span class="w-2.5 h-2.5 rounded-full bg-rose-500/80"></span>
+              </div>
+            </div>
+
+            <!-- Card 1: Timer Intervals -->
+            <div class="bg-[#161b22] border border-[#30363d] rounded-xl p-3.5 mb-3">
+              <div class="text-[10px] font-bold text-[#4fc3f7] tracking-wider mb-2.5">
+                {t('mockup.settings.intervals')}
+              </div>
+              <div class="space-y-2">
+                <div class="flex items-center justify-between">
+                  <span class="text-slate-200 text-xs">{t('mockup.settings.eye_interval')}</span>
+                  <div class="flex items-center gap-1.5">
+                    <span class="bg-[#21262d] border border-[#388bfd] text-white px-2.5 py-0.5 rounded text-xs font-semibold text-center w-12">20</span>
+                    <span class="text-slate-400 text-[10px]">min</span>
+                  </div>
+                </div>
+                <div class="flex items-center justify-between">
+                  <span class="text-slate-200 text-xs">{t('mockup.settings.posture_interval')}</span>
+                  <div class="flex items-center gap-1.5">
+                    <span class="bg-[#21262d] border border-[#388bfd] text-white px-2.5 py-0.5 rounded text-xs font-semibold text-center w-12">45</span>
+                    <span class="text-slate-400 text-[10px]">min</span>
+                  </div>
+                </div>
+                <div class="flex items-center justify-between">
+                  <span class="text-slate-200 text-xs">{t('mockup.settings.idle_interval')}</span>
+                  <div class="flex items-center gap-1.5">
+                    <span class="bg-[#21262d] border border-[#388bfd] text-white px-2.5 py-0.5 rounded text-xs font-semibold text-center w-12">2</span>
+                    <span class="text-slate-400 text-[10px]">min</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Card 2: System Preferences -->
+            <div class="bg-[#161b22] border border-[#30363d] rounded-xl p-3.5 mb-4">
+              <div class="text-[10px] font-bold text-[#b388ff] tracking-wider mb-2.5">
+                {t('mockup.settings.sec_system')}
+              </div>
+              <div class="space-y-2">
+                <label class="flex items-center gap-2 text-xs text-slate-200 cursor-pointer">
+                  <input type="checkbox" checked disabled class="accent-sky-500 rounded" />
+                  <span>{t('mockup.settings.sound')}</span>
+                </label>
+                <label class="flex items-center gap-2 text-xs text-slate-200 cursor-pointer">
+                  <input type="checkbox" checked disabled class="accent-sky-500 rounded" />
+                  <span>{t('mockup.settings.autostart')}</span>
+                </label>
+              </div>
+            </div>
+
+            <!-- Footer Action Buttons -->
+            <div class="flex items-center justify-between pt-1">
+              <span class="text-[10px] text-[#8b949e] font-mono">{t('mockup.settings.version')}</span>
+              <div class="flex gap-2">
+                <button type="button" class="px-3 py-1 rounded-md text-xs font-semibold bg-[#21262d] text-slate-300 border border-[#30363d] cursor-default">
+                  {t('mockup.settings.cancel')}
+                </button>
+                <button type="button" class="px-3 py-1 rounded-md text-xs font-semibold bg-[#388bfd] hover:bg-[#4fc3f7] text-white shadow-sm transition-colors cursor-default">
+                  {t('mockup.settings.save')}
+                </button>
+              </div>
+            </div>
+
+          </div>
         </div>
       </div>
-      )}
     </div>
 
   </section>
 
   <!-- Footer -->
   <footer class="mt-32 pt-8 pb-8 border-t border-slate-800/50 w-full text-slate-500 text-sm flex justify-center items-center">
-    <p>© {new Date().getFullYear()} {t('footer.dev')} <a href="https://ana-catalina.com" target="_blank" class="text-sky-400 hover:text-sky-300 transition-colors">Ana-Catalina</a>.</p>
+    <p>© {new Date().getFullYear()} {t('footer.dev')} <a href="https://ana-catalina.com" target="_blank" class="text-sky-400 hover:text-sky-300 transition-colors font-medium">Ana-Catalina</a>.</p>
   </footer>
 </main>
 
