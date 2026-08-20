@@ -55,9 +55,9 @@
                                 <ColumnDefinition Width="Auto" />
                                 <ColumnDefinition Width="35" />
                             </Grid.ColumnDefinitions>
-                            <TextBlock x:Name="EyeRestLabel" Text="Eye Rest Interval:" VerticalAlignment="Center" Foreground="#c9d1d9" />
-                            <TextBox x:Name="TxtLookAway" Grid.Column="1" Width="55" Height="26" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Background="#21262d" Foreground="#ffffff" BorderBrush="#30363d" />
-                            <TextBlock Grid.Column="2" Text="min" VerticalAlignment="Center" Margin="6,0,0,0" Foreground="#8b949e" />
+                            <TextBlock x:Name="EyeRestLabel" Text="Eye Rest Interval:" VerticalAlignment="Center" Foreground="#ffffff" FontSize="12" />
+                            <TextBox x:Name="TxtLookAway" Grid.Column="1" Width="55" Height="28" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Background="#21262d" Foreground="#ffffff" BorderBrush="#388bfd" BorderThickness="1" FontSize="12" FontWeight="SemiBold" SelectionBrush="#388bfd" />
+                            <TextBlock Grid.Column="2" Text="min" VerticalAlignment="Center" Margin="6,0,0,0" Foreground="#8b949e" FontSize="11" />
                         </Grid>
 
                         <!-- Posture -->
@@ -67,9 +67,9 @@
                                 <ColumnDefinition Width="Auto" />
                                 <ColumnDefinition Width="35" />
                             </Grid.ColumnDefinitions>
-                            <TextBlock x:Name="PostureLabel" Text="Posture Check Interval:" VerticalAlignment="Center" Foreground="#c9d1d9" />
-                            <TextBox x:Name="TxtPosture" Grid.Column="1" Width="55" Height="26" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Background="#21262d" Foreground="#ffffff" BorderBrush="#30363d" />
-                            <TextBlock Grid.Column="2" Text="min" VerticalAlignment="Center" Margin="6,0,0,0" Foreground="#8b949e" />
+                            <TextBlock x:Name="PostureLabel" Text="Posture Check Interval:" VerticalAlignment="Center" Foreground="#ffffff" FontSize="12" />
+                            <TextBox x:Name="TxtPosture" Grid.Column="1" Width="55" Height="28" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Background="#21262d" Foreground="#ffffff" BorderBrush="#388bfd" BorderThickness="1" FontSize="12" FontWeight="SemiBold" SelectionBrush="#388bfd" />
+                            <TextBlock Grid.Column="2" Text="min" VerticalAlignment="Center" Margin="6,0,0,0" Foreground="#8b949e" FontSize="11" />
                         </Grid>
 
                         <!-- Idle -->
@@ -79,9 +79,9 @@
                                 <ColumnDefinition Width="Auto" />
                                 <ColumnDefinition Width="35" />
                             </Grid.ColumnDefinitions>
-                            <TextBlock x:Name="IdleLabel" Text="Idle Inactivity Reset:" VerticalAlignment="Center" Foreground="#c9d1d9" />
-                            <TextBox x:Name="TxtIdle" Grid.Column="1" Width="55" Height="26" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Background="#21262d" Foreground="#ffffff" BorderBrush="#30363d" />
-                            <TextBlock Grid.Column="2" Text="min" VerticalAlignment="Center" Margin="6,0,0,0" Foreground="#8b949e" />
+                            <TextBlock x:Name="IdleLabel" Text="Idle Inactivity Reset:" VerticalAlignment="Center" Foreground="#ffffff" FontSize="12" />
+                            <TextBox x:Name="TxtIdle" Grid.Column="1" Width="55" Height="28" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Background="#21262d" Foreground="#ffffff" BorderBrush="#388bfd" BorderThickness="1" FontSize="12" FontWeight="SemiBold" SelectionBrush="#388bfd" />
+                            <TextBlock Grid.Column="2" Text="min" VerticalAlignment="Center" Margin="6,0,0,0" Foreground="#8b949e" FontSize="11" />
                         </Grid>
 
                         <!-- Dismiss -->
@@ -91,9 +91,9 @@
                                 <ColumnDefinition Width="Auto" />
                                 <ColumnDefinition Width="35" />
                             </Grid.ColumnDefinitions>
-                            <TextBlock x:Name="DismissLabel" Text="Auto-dismiss Timeout:" VerticalAlignment="Center" Foreground="#c9d1d9" />
-                            <TextBox x:Name="TxtDismiss" Grid.Column="1" Width="55" Height="26" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Background="#21262d" Foreground="#ffffff" BorderBrush="#30363d" />
-                            <TextBlock Grid.Column="2" Text="sec" VerticalAlignment="Center" Margin="6,0,0,0" Foreground="#8b949e" />
+                            <TextBlock x:Name="DismissLabel" Text="Auto-dismiss Timeout:" VerticalAlignment="Center" Foreground="#ffffff" FontSize="12" />
+                            <TextBox x:Name="TxtDismiss" Grid.Column="1" Width="55" Height="28" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Background="#21262d" Foreground="#ffffff" BorderBrush="#388bfd" BorderThickness="1" FontSize="12" FontWeight="SemiBold" SelectionBrush="#388bfd" />
+                            <TextBlock Grid.Column="2" Text="sec" VerticalAlignment="Center" Margin="6,0,0,0" Foreground="#8b949e" FontSize="11" />
                         </Grid>
                     </StackPanel>
                 </Border>
@@ -116,26 +116,32 @@
                         <!-- Sound Checkbox -->
                         <CheckBox x:Name="ChkSound"
                                   Content="Play notification sound"
-                                  Foreground="#c9d1d9"
+                                  Foreground="#ffffff"
+                                  FontSize="12"
                                   Margin="0,6" />
 
                         <!-- Autostart Checkbox -->
                         <CheckBox x:Name="ChkAutoStart"
                                   Content="Start on Windows login"
-                                  Foreground="#c9d1d9"
+                                  Foreground="#ffffff"
+                                  FontSize="12"
                                   Margin="0,6" />
 
                         <!-- Language Dropdown -->
                         <Grid Margin="0,6">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="120" />
+                                <ColumnDefinition Width="130" />
                             </Grid.ColumnDefinitions>
-                            <TextBlock x:Name="LanguageLabel" Text="Language:" VerticalAlignment="Center" Foreground="#c9d1d9" />
+                            <TextBlock x:Name="LanguageLabel" Text="Language:" VerticalAlignment="Center" Foreground="#ffffff" FontSize="12" />
                             <ComboBox x:Name="CmbLanguage"
                                       Grid.Column="1"
+                                      Height="28"
                                       Background="#21262d"
-                                      Foreground="#ffffff">
+                                      Foreground="#ffffff"
+                                      BorderBrush="#388bfd"
+                                      BorderThickness="1"
+                                      FontSize="12">
                                 <ComboBoxItem Content="English" Tag="en" />
                                 <ComboBoxItem Content="Español" Tag="es" />
                             </ComboBox>
