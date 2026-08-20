@@ -54,21 +54,36 @@ public partial class App : Application
     {
         _trayIcon = new TaskbarIcon
         {
-            ToolTipText = "Screen Health Guardian"
+            ToolTipText = "Screen Health Guardian",
+            Icon = SystemIcons.Shield
         };
 
-        // Load Icon from disk or resource
-        string exeDir = AppDomain.CurrentDomain.BaseDirectory;
-        string iconPath = Path.Combine(exeDir, "Assets", "icon.ico");
-        if (File.Exists(iconPath))
+        // Try to load custom icon from resources or disk
+        try
         {
-            _trayIcon.Icon = new Icon(iconPath);
+            var uri = new Uri("pack://application:,,,/Assets/icon.ico", UriKind.RelativeOrAbsolute);
+            var iconStream = Application.GetResourceStream(uri)?.Stream;
+            if (iconStream != null)
+            {
+                _trayIcon.Icon = new Icon(iconStream);
+            }
+            else
+            {
+                string exeDir = AppDomain.CurrentDomain.BaseDirectory;
+                string iconPath = Path.Combine(exeDir, "Assets", "icon.ico");
+                if (File.Exists(iconPath))
+                {
+                    _trayIcon.Icon = new Icon(iconPath);
+                }
+            }
         }
-        else
+        catch
         {
-            // Fallback icon
             _trayIcon.Icon = SystemIcons.Application;
         }
+
+        // Left double click opens Settings
+        _trayIcon.DoubleClickCommand = new RelayCommand(_ => ShowSettings());
 
         RebuildTrayMenu();
         _trayIcon.ForceCreate();
@@ -199,4 +214,20 @@ public partial class App : Application
         _singleInstanceMutex?.Dispose();
         base.OnExit(e);
     }
+}
+
+public class RelayCommand : System.Windows.Input.ICommand
+{
+    private readonly Action<object?> _execute;
+    private readonly Predicate<object?>? _canExecute;
+
+    public RelayCommand(Action<object?> execute, Predicate<object?>? canExecute = null)
+    {
+        _execute = execute;
+        _canExecute = canExecute;
+    }
+
+    public bool CanExecute(object? parameter) => _canExecute?.Invoke(parameter) ?? true;
+    public void Execute(object? parameter) => _execute(parameter);
+    public event EventHandler? CanExecuteChanged;
 }
