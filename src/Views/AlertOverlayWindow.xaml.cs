@@ -3,6 +3,7 @@ using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Threading;
+using ScreenHealthGuardian.Services;
 
 namespace ScreenHealthGuardian.Views;
 
@@ -10,7 +11,6 @@ public partial class AlertOverlayWindow : Window
 {
     private readonly DispatcherTimer _dismissTimer;
     private readonly int _totalSeconds;
-    private int _remainingSeconds;
     private readonly Action? _onDismissed;
     private bool _dismissed = false;
 
@@ -20,6 +20,7 @@ public partial class AlertOverlayWindow : Window
         string message,
         string buttonText,
         string accentHex,
+        DisplayInfo? targetDisplay = null,
         int autoDismissSec = 30,
         bool soundEnabled = true,
         Action? onDismissed = null)
@@ -27,8 +28,20 @@ public partial class AlertOverlayWindow : Window
         InitializeComponent();
 
         _totalSeconds = autoDismissSec;
-        _remainingSeconds = autoDismissSec;
         _onDismissed = onDismissed;
+
+        // Position window within target display bounds
+        if (targetDisplay != null)
+        {
+            var (left, top) = targetDisplay.CalculateCenter(Width, Height);
+            Left = left;
+            Top = top;
+        }
+        else
+        {
+            Left = SystemParameters.WorkArea.Left + Math.Max(0, (SystemParameters.WorkArea.Width - Width) / 2.0);
+            Top = SystemParameters.WorkArea.Top + Math.Max(0, (SystemParameters.WorkArea.Height - Height) / 2.0);
+        }
 
         EmojiBlock.Text = emoji;
         TitleBlock.Text = title;
@@ -96,6 +109,14 @@ public partial class AlertOverlayWindow : Window
     private void Window_MouseDown(object sender, MouseButtonEventArgs e)
     {
         Dismiss();
+    }
+
+    private void Window_KeyDown(object sender, KeyEventArgs e)
+    {
+        if (e.Key == Key.Escape)
+        {
+            Dismiss();
+        }
     }
 
     public void Dismiss()

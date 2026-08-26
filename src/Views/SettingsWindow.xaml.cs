@@ -43,6 +43,20 @@ public partial class SettingsWindow : Window
                 break;
             }
         }
+
+        string displayMode = config.DisplayMode ?? "all";
+        foreach (ComboBoxItem item in CmbDisplayMode.Items)
+        {
+            if ((string)item.Tag == displayMode)
+            {
+                CmbDisplayMode.SelectedItem = item;
+                break;
+            }
+        }
+        if (CmbDisplayMode.SelectedItem == null && CmbDisplayMode.Items.Count > 0)
+        {
+            CmbDisplayMode.SelectedIndex = 0;
+        }
     }
 
     private void ApplyLocalization()
@@ -59,6 +73,9 @@ public partial class SettingsWindow : Window
         ChkSound.Content = _locService.Get("settings_sound");
         ChkAutoStart.Content = _locService.Get("settings_autostart");
         LanguageLabel.Text = _locService.Get("settings_language");
+        DisplayModeLabel.Text = _locService.Get("settings_display_mode");
+        CmbItemDisplayAll.Content = _locService.Get("settings_display_mode_all");
+        CmbItemDisplayActive.Content = _locService.Get("settings_display_mode_active");
 
         BtnCancel.Content = _locService.Get("settings_cancel");
         BtnSave.Content = _locService.Get("settings_save");
@@ -72,9 +89,15 @@ public partial class SettingsWindow : Window
         if (!int.TryParse(TxtDismiss.Text, out int dismiss) || dismiss < 5) dismiss = 30;
 
         string lang = "en";
-        if (CmbLanguage.SelectedItem is ComboBoxItem selectedItem)
+        if (CmbLanguage.SelectedItem is ComboBoxItem selectedLang)
         {
-            lang = (string)selectedItem.Tag;
+            lang = (string)selectedLang.Tag;
+        }
+
+        string displayMode = "all";
+        if (CmbDisplayMode.SelectedItem is ComboBoxItem selectedDisplay)
+        {
+            displayMode = (string)selectedDisplay.Tag;
         }
 
         bool autoStart = ChkAutoStart.IsChecked ?? false;
@@ -89,6 +112,7 @@ public partial class SettingsWindow : Window
             c.SoundEnabled = sound;
             c.AutoStart = autoStart;
             c.Language = lang;
+            c.DisplayMode = displayMode;
         });
 
         _locService.SetLanguage(lang);

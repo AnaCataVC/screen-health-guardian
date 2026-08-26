@@ -242,7 +242,7 @@
                         <Grid Margin="0,6">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="130" />
+                                <ColumnDefinition Width="170" />
                             </Grid.ColumnDefinitions>
                             <TextBlock x:Name="LanguageLabel" Text="Language:" VerticalAlignment="Center" Foreground="#ffffff" FontSize="12" />
                             <ComboBox x:Name="CmbLanguage"
@@ -252,6 +252,23 @@
                                       FontSize="12">
                                 <ComboBoxItem Content="English" Tag="en" />
                                 <ComboBoxItem Content="Español" Tag="es" />
+                            </ComboBox>
+                        </Grid>
+
+                        <!-- Display Mode Dropdown -->
+                        <Grid Margin="0,6">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="170" />
+                            </Grid.ColumnDefinitions>
+                            <TextBlock x:Name="DisplayModeLabel" Text="Alert Display:" VerticalAlignment="Center" Foreground="#ffffff" FontSize="12" />
+                            <ComboBox x:Name="CmbDisplayMode"
+                                      Grid.Column="1"
+                                      Height="28"
+                                      Style="{StaticResource DarkComboBoxStyle}"
+                                      FontSize="12">
+                                <ComboBoxItem x:Name="CmbItemDisplayAll" Content="All Monitors" Tag="all" />
+                                <ComboBoxItem x:Name="CmbItemDisplayActive" Content="Active Screen (Cursor)" Tag="active" />
                             </ComboBox>
                         </Grid>
                     </StackPanel>

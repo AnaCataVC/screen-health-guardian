@@ -150,36 +150,121 @@ public partial class App : Application
         _trayIcon.ToolTipText = $"Screen Health Guardian\n{status}";
     }
 
-    private void ShowLookAwayAlert()
+    private readonly List<AlertOverlayWindow> _activeOverlays = new();
+    private int _activeOverlaySessionId = 0;
+
+    private void ShowMultiMonitorAlert(
+        string emoji,
+        string title,
+        string message,
+        string buttonText,
+        string accentHex,
+        bool wasLookAway)
     {
         var config = _configService.Current;
-        var window = new AlertOverlayWindow(
+        IReadOnlyList<DisplayInfo> displays = (config.DisplayMode?.ToLowerInvariant() == "active")
+            ? new[] { DisplayManager.GetCursorDisplay() }
+            : DisplayManager.GetDisplays();
+
+        // Close any currently active overlays before spawning new session
+        DismissAllActiveOverlays();
+
+        int currentSessionId = Interlocked.Increment(ref _activeOverlaySessionId);
+        int isDismissedFlag = 0;
+
+        void OnSessionDismissed()
+        {
+            // Ensure dismissal callback and window teardown runs exactly once per alert trigger
+            if (Interlocked.Exchange(ref isDismissedFlag, 1) == 0)
+            {
+                _timerService.AlertDismissed(wasLookAway);
+                DismissAllActiveOverlays();
+            }
+        }
+
+        bool soundPlayed = false;
+
+        foreach (var display in displays)
+        {
+            // Play sound once on the primary display (or first display)
+            bool shouldPlaySound = config.SoundEnabled && !soundPlayed && (display.IsPrimary || displays.Count == 1);
+            if (shouldPlaySound)
+            {
+                soundPlayed = true;
+            }
+
+            var window = new AlertOverlayWindow(
+                emoji: emoji,
+                title: title,
+                message: message,
+                buttonText: buttonText,
+                accentHex: accentHex,
+                targetDisplay: display,
+                autoDismissSec: config.AlertAutoDismissSec,
+                soundEnabled: shouldPlaySound,
+                onDismissed: OnSessionDismissed
+            );
+
+            _activeOverlays.Add(window);
+            window.Show();
+        }
+
+        // If sound was enabled but not played yet, play once
+        if (config.SoundEnabled && !soundPlayed && _activeOverlays.Count > 0)
+        {
+            try
+            {
+                System.Media.SystemSounds.Asterisk.Play();
+            }
+            catch
+            {
+                // Silently handle sound play failure
+            }
+        }
+    }
+
+    private void DismissAllActiveOverlays()
+    {
+        if (_activeOverlays.Count == 0) return;
+
+        var overlaysToClose = _activeOverlays.ToList();
+        _activeOverlays.Clear();
+
+        foreach (var overlay in overlaysToClose)
+        {
+            try
+            {
+                overlay.Dismiss();
+            }
+            catch
+            {
+                // Ignore errors closing individual overlay
+            }
+        }
+    }
+
+    private void ShowLookAwayAlert()
+    {
+        ShowMultiMonitorAlert(
             emoji: "👀",
             title: _locService.Get("alert_look_away_title"),
             message: _locService.Get("alert_look_away_msg"),
             buttonText: _locService.Get("alert_look_away_btn"),
             accentHex: "#4fc3f7",
-            autoDismissSec: config.AlertAutoDismissSec,
-            soundEnabled: config.SoundEnabled,
-            onDismissed: () => _timerService.AlertDismissed(wasLookAway: true)
+            wasLookAway: true
         );
-        window.Show();
     }
 
     private void ShowPostureAlert()
     {
-        var config = _configService.Current;
-        var window = new AlertOverlayWindow(
+        ShowMultiMonitorAlert(
             emoji: "✨",
             title: _locService.Get("alert_posture_title"),
             message: _locService.Get("alert_posture_msg"),
             buttonText: _locService.Get("alert_posture_btn"),
             accentHex: "#b388ff",
-            autoDismissSec: config.AlertAutoDismissSec,
-            soundEnabled: config.SoundEnabled,
-            onDismissed: () => _timerService.AlertDismissed(wasLookAway: false)
+            wasLookAway: false
         );
-        window.Show();
     }
 
     private void ShowSettings()
@@ -194,6 +279,7 @@ public partial class App : Application
 
     private void ExitApplication()
     {
+        DismissAllActiveOverlays();
         _timerService.Stop();
         _trayIcon?.Dispose();
         try
@@ -229,5 +315,9 @@ public class RelayCommand : System.Windows.Input.ICommand
 
     public bool CanExecute(object? parameter) => _canExecute?.Invoke(parameter) ?? true;
     public void Execute(object? parameter) => _execute(parameter);
-    public event EventHandler? CanExecuteChanged;
+    public event EventHandler? CanExecuteChanged
+    {
+        add => System.Windows.Input.CommandManager.RequerySuggested += value;
+        remove => System.Windows.Input.CommandManager.RequerySuggested -= value;
+    }
 }

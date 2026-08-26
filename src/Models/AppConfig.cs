@@ -27,4 +27,7 @@ public class AppConfig
 
     [JsonPropertyName("language")]
     public string Language { get; set; } = "en";
+
+    [JsonPropertyName("display_mode")]
+    public string DisplayMode { get; set; } = "all";
 }

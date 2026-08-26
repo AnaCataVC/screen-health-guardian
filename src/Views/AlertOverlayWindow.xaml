@@ -8,9 +8,10 @@
         Background="Transparent"
         Topmost="True"
         ShowInTaskbar="False"
-        WindowStartupLocation="CenterScreen"
+        WindowStartupLocation="Manual"
         Opacity="0"
-        MouseDown="Window_MouseDown">
+        MouseDown="Window_MouseDown"
+        KeyDown="Window_KeyDown">
 
     <Window.Triggers>
         <EventTrigger RoutedEvent="Window.Loaded">
