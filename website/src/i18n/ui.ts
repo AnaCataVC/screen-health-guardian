@@ -8,7 +8,7 @@ export const defaultLang = 'es';
 export const ui = {
   es: {
     'meta.title': 'Screen Health Guardian - Cuida tu salud al trabajar',
-    'badge.available': 'Disponible para Windows 10/11 • v2.0.0 (.NET 9)',
+    'badge.available': 'Disponible para Windows 10/11 • v2.1.0 (.NET 9)',
     'hero.title': 'Screen Health Guardian',
     'hero.subtitle': 'Cuida tu salud',
     'hero.description': 'Una aplicación de escritorio nativa y ultraligera que te envía alertas periódicas de salud mientras trabajas. Detecta tu actividad real para no interrumpirte si no estás en el PC.',
@@ -45,11 +45,11 @@ export const ui = {
     'mockup.settings.language': 'Idioma:',
     'mockup.settings.save': 'Guardar Preferencias',
     'mockup.settings.cancel': 'Cancelar',
-    'mockup.settings.version': 'Screen Health Guardian v2.0.0'
+    'mockup.settings.version': 'Screen Health Guardian v2.1.0'
   },
   en: {
     'meta.title': 'Screen Health Guardian - Care for your health while working',
-    'badge.available': 'Available for Windows 10/11 • v2.0.0 (.NET 9)',
+    'badge.available': 'Available for Windows 10/11 • v2.1.0 (.NET 9)',
     'hero.title': 'Screen Health Guardian',
     'hero.subtitle': 'Care for your health',
     'hero.description': 'An ultra-lightweight, high-performance desktop application that sends you periodic health alerts while you work. It tracks real user activity to never interrupt you while away.',
@@ -86,6 +86,6 @@ export const ui = {
     'mockup.settings.language': 'Language:',
     'mockup.settings.save': 'Save Preferences',
     'mockup.settings.cancel': 'Cancel',
-    'mockup.settings.version': 'Screen Health Guardian v2.0.0'
+    'mockup.settings.version': 'Screen Health Guardian v2.1.0'
   },
 } as const;

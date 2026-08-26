@@ -5,12 +5,12 @@ echo ===================================================
 echo   Screen Health Guardian - Build Script (.NET 9)
 echo ===================================================
 
-where dotnet >nul 2>&1
-if %ERRORLEVEL% NEQ 0 (
-    if exist "%LOCALAPPDATA%\Microsoft\dotnet\dotnet.exe" (
-        set "DOTNET_ROOT=%LOCALAPPDATA%\Microsoft\dotnet"
-        set "PATH=%LOCALAPPDATA%\Microsoft\dotnet;%PATH%"
-    ) else (
+if exist "%LOCALAPPDATA%\Microsoft\dotnet\dotnet.exe" (
+    set "DOTNET_ROOT=%LOCALAPPDATA%\Microsoft\dotnet"
+    set "PATH=%LOCALAPPDATA%\Microsoft\dotnet;%PATH%"
+) else (
+    where dotnet >nul 2>&1
+    if %ERRORLEVEL% NEQ 0 (
         echo [ERROR] .NET SDK is not found.
         echo Install .NET SDK with: winget install Microsoft.DotNet.SDK.9
         exit /b 1
