@@ -8,7 +8,7 @@ This document serves as the authoritative operational manual, workflow reference
 
 **Screen Health Guardian** is a lightweight, high-performance Windows desktop application designed to promote ergonomic habits and screen health through automated, activity-aware reminders (20-20-20 eye rest and posture breaks).
 
-The repository is organized as a monorepo containing both the desktop application and its official landing website:
+The repository is organized as a monorepo containing the desktop application:
 
 ```text
 screen-health-guardian/
@@ -25,11 +25,6 @@ screen-health-guardian/
 │   └── Views/
 │       ├── AlertOverlayWindow.xaml # Borderless topmost translucent overlay with countdown bar
 │       └── SettingsWindow.xaml     # Modern Windows 11-style preferences panel
-├── website/                        # Astro-based Landing Page & Promotional Web
-│   ├── src/                        # Astro components, layouts, and pages
-│   ├── public/                     # Static assets (favicons, screenshots, installer links)
-│   ├── package.json                # Website dependencies & build scripts
-│   └── astro.config.mjs            # Astro configuration
 ├── build.bat                       # Automated release build script (dotnet publish + Inno Setup)
 ├── installer.iss                   # Inno Setup compilation script for Windows installer
 ├── docs/                           # Architecture decisions, benchmarks & learning notes
@@ -47,10 +42,6 @@ screen-health-guardian/
 - **Single Instance**: Controlled via named Win32 `Mutex` (`Global\ScreenHealthGuardian_SingleInstance_Mutex`).
 - **Tray & Background Mode**: System tray integration powered by `H.NotifyIcon.Wpf`. Closing settings or overlays minimizes to tray.
 - **Persistence**: Configuration saved in `%APPDATA%/ScreenHealthGuardian/config.json`.
-
-### Website & Landing Page (`website/`)
-- **Framework**: Astro (Static Site Generation / High Performance).
-- **Styling**: Modern, responsive CSS / Tailwind.
 
 ---
 
@@ -92,39 +83,8 @@ dotnet run --project src/ScreenHealthGuardian.csproj
 > 1. **Settings UI (Preferences Screen)**: Edit [`src/Views/SettingsWindow.xaml`](src/Views/SettingsWindow.xaml) and update the footer version label (`Screen Health Guardian vX.Y.Z`) so the user sees the correct version inside the application.
 > 2. **Project File**: Update `<Version>X.Y.Z</Version>` in [`src/ScreenHealthGuardian.csproj`](src/ScreenHealthGuardian.csproj).
 > 3. **Inno Setup Installer Script**: Update `AppVersion=X.Y.Z` in [`installer.iss`](installer.iss).
-> 4. **Landing Page**: Update [`website/package.json`](website/package.json) and download links/badges if applicable.
 
 > **Note on Build Artifacts**: All compiled installers (`ScreenHealthGuardian-Setup.exe`) and production binaries must be output to `./releases/`.
-
-### Website (`website/`)
-
-```powershell
-# Start dev server from website directory
-cd website; npm run dev
-
-# Alternative: Start dev server in background mode
-cd website; npx astro dev --background
-
-# Manage the background server
-npx astro dev stop
-npx astro dev status
-npx astro dev logs
-
-# Build production static site
-cd website; npm run build
-```
-
-#### Official Astro Documentation & Guides
-Consult these references before working on website features:
-- [Astro Documentation Overview](https://docs.astro.build)
-- [Routing, Dynamic Routes & Middleware](https://docs.astro.build/en/guides/routing/)
-- [Astro Components Guide](https://docs.astro.build/en/basics/astro-components/)
-- [UI Framework Components (React, Vue, Svelte)](https://docs.astro.build/en/guides/framework-components/)
-- [Content Collections & Data Management](https://docs.astro.build/en/guides/content-collections/)
-- [Styling & Tailwind CSS](https://docs.astro.build/en/guides/styling/)
-- [Internationalization (i18n)](https://docs.astro.build/en/guides/internationalization/)
-
----
 
 ## 5. Testing & Quality Standards
 
