@@ -41,6 +41,8 @@ if %ERRORLEVEL% NEQ 0 (
 
 echo [3/3] Compiling Inno Setup installer...
 set "ISCC=C:\Program Files (x86)\Inno Setup 6\ISCC.exe"
+if not exist "%ISCC%" set "ISCC=%LOCALAPPDATA%\Programs\Inno Setup 6\ISCC.exe"
+if not exist "%ISCC%" set "ISCC=C:\Program Files\Inno Setup 6\ISCC.exe"
 if exist "%ISCC%" (
     "%ISCC%" installer.iss
     echo [SUCCESS] Installer generated in releases\

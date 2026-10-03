@@ -4,7 +4,7 @@
 [Setup]
 ; App Information
 AppName=Screen Health Guardian
-AppVersion=2.1.0
+AppVersion=2.1.1
 AppPublisher=AnaCataVC
 AppCopyright=Copyright (C) 2026
 AppSupportURL=https://github.com/AnaCataVC/screen-health-guardian

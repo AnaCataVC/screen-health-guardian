@@ -43,7 +43,6 @@ public partial class AlertOverlayWindow : Window
             Top = SystemParameters.WorkArea.Top + Math.Max(0, (SystemParameters.WorkArea.Height - Height) / 2.0);
         }
 
-        EmojiBlock.Text = emoji;
         TitleBlock.Text = title;
         MessageBlock.Text = message;
         DismissButton.Content = buttonText;
@@ -51,6 +50,17 @@ public partial class AlertOverlayWindow : Window
         var accentBrush = (SolidColorBrush)new BrushConverter().ConvertFrom(accentHex)!;
         TitleBlock.Foreground = accentBrush;
         AutoDismissProgress.Foreground = accentBrush;
+
+        if (string.IsNullOrWhiteSpace(emoji))
+        {
+            EmojiBadge.Visibility = Visibility.Collapsed;
+        }
+        else
+        {
+            EmojiBlock.Text = emoji;
+            EmojiBadge.Visibility = Visibility.Visible;
+            EmojiBadge.BorderBrush = new SolidColorBrush(Color.FromArgb(140, accentBrush.Color.R, accentBrush.Color.G, accentBrush.Color.B));
+        }
 
         if (soundEnabled)
         {
