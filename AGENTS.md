@@ -86,7 +86,22 @@ dotnet run --project src/ScreenHealthGuardian.csproj
 
 > **Note on Build Artifacts**: All compiled installers (`ScreenHealthGuardian-Setup.exe`) and production binaries must be output to `./releases/`.
 
-## 5. Testing & Quality Standards
+---
+
+## 5. Release Distribution Invariant (Single Deliverable Policy)
+
+> [!IMPORTANT]
+> **Single Official Deliverable for GitHub Releases:**
+> Every release published on GitHub **MUST ALWAYS** publish **ONLY** the official Inno Setup installer executable:
+> ```text
+> ScreenHealthGuardian-Setup.exe
+> ```
+> - **Strict Prohibition on Extra Assets**: NEVER publish standalone portable executables (`.exe`), unpackaged binaries (such as `releases/win-x64/ScreenHealthGuardian.exe`), or compressed archives (`.zip`) as GitHub Release assets. Production binaries compiled during `dotnet publish` exist strictly to be packaged into the Setup installer by Inno Setup, never as independent release downloads.
+> - **Verification Gate**: Any release workflow or release agent (`ami-release-manager`) must verify with `gh release view <tag> --json assets` that only the Setup installer executable is uploaded. Releases without the Setup executable or containing portable/zip files are strictly non-compliant.
+
+---
+
+## 6. Testing & Quality Standards
 
 - **Clean Code & Modularity**: Adhere to SOLID principles, DRY, and KISS.
 - **UI & Overlay Behavior**: Overlays must be topmost, non-intrusive, and support multi-monitor positioning gracefully.
