@@ -53,6 +53,7 @@
                            Text="👀"
                            FontSize="32"
                            Foreground="#ffffff"
+                           TextAlignment="Center"
                            HorizontalAlignment="Center"
                            VerticalAlignment="Center"
                            FontFamily="Segoe UI Emoji">

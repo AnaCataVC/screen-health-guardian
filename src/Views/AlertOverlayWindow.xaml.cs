@@ -1,3 +1,4 @@
+using System.Globalization;
 using System.Media;
 using System.Windows;
 using System.Windows.Input;
@@ -60,6 +61,7 @@ public partial class AlertOverlayWindow : Window
             EmojiBlock.Text = emoji;
             EmojiBadge.Visibility = Visibility.Visible;
             EmojiBadge.BorderBrush = new SolidColorBrush(Color.FromArgb(140, accentBrush.Color.R, accentBrush.Color.G, accentBrush.Color.B));
+            CenterEmojiOpticalBounds(emoji);
         }
 
         if (soundEnabled)
@@ -91,6 +93,65 @@ public partial class AlertOverlayWindow : Window
         {
             AutoDismissProgress.Visibility = Visibility.Collapsed;
         }
+    }
+
+    /// <summary>
+    /// Calculates the optical center offset between the WPF TextBlock layout box
+    /// and the actual rendered glyph ink bounding box for a given font and size.
+    /// </summary>
+    public static (double OffsetX, double OffsetY) CalculateGlyphCenterOffset(
+        string text,
+        FontFamily fontFamily,
+        double fontSize,
+        double pixelsPerDip = 1.0)
+    {
+        if (string.IsNullOrWhiteSpace(text) || fontSize <= 0)
+        {
+            return (0, 0);
+        }
+
+        var typeface = new Typeface(
+            fontFamily,
+            FontStyles.Normal,
+            FontWeights.Normal,
+            FontStretches.Normal);
+
+        var formattedText = new FormattedText(
+            text,
+            CultureInfo.InvariantCulture,
+            FlowDirection.LeftToRight,
+            typeface,
+            fontSize,
+            Brushes.White,
+            pixelsPerDip > 0 ? pixelsPerDip : 1.0);
+
+        Geometry geometry = formattedText.BuildGeometry(new Point(0, 0));
+        Rect bounds = geometry.Bounds;
+
+        if (bounds.IsEmpty || bounds.Width <= 0 || bounds.Height <= 0)
+        {
+            return (0, 0);
+        }
+
+        double layoutCenterX = formattedText.WidthIncludingTrailingWhitespace / 2.0;
+        double layoutCenterY = formattedText.Height / 2.0;
+
+        double glyphCenterX = bounds.Left + (bounds.Width / 2.0);
+        double glyphCenterY = bounds.Top + (bounds.Height / 2.0);
+
+        return (glyphCenterX - layoutCenterX, glyphCenterY - layoutCenterY);
+    }
+
+    private void CenterEmojiOpticalBounds(string emoji)
+    {
+        double pixelsPerDip = VisualTreeHelper.GetDpi(this).PixelsPerDip;
+        var (offsetX, offsetY) = CalculateGlyphCenterOffset(
+            emoji,
+            EmojiBlock.FontFamily,
+            EmojiBlock.FontSize,
+            pixelsPerDip);
+
+        EmojiBlock.RenderTransform = new TranslateTransform(-offsetX, -offsetY);
     }
 
     private double _elapsedMs = 0;

@@ -12,6 +12,8 @@ bin/
 obj/
 src/bin/
 src/obj/
+tests/**/bin/
+tests/**/obj/
 *.spec
 
 # Virtual environment
@@ -27,6 +29,7 @@ venv/
 # OS
 Thumbs.db
 .DS_Store
+desktop.ini
 
 # App generated
 config.json
