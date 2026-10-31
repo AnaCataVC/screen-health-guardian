@@ -3,150 +3,41 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="Screen Health Guardian — Preferences"
         Icon="pack://application:,,,/Assets/icon.ico"
-        Height="620" Width="480"
+        Height="650" Width="500"
         WindowStartupLocation="CenterScreen"
         ResizeMode="NoResize"
-        Background="#0b0e14"
-        Foreground="#ffffff"
+        Background="{StaticResource Brush.Surface.Canvas}"
+        Foreground="{StaticResource Brush.Text.Primary}"
         FontFamily="Segoe UI">
 
-    <Window.Resources>
-        <!-- Custom Dark Theme ToggleButton for ComboBox -->
-        <ControlTemplate x:Key="ComboBoxToggleButton" TargetType="{x:Type ToggleButton}">
-            <Border x:Name="templateRoot"
-                    Background="#21262d"
-                    BorderBrush="#388bfd"
-                    BorderThickness="1"
-                    CornerRadius="6">
-                <Border x:Name="splitBorder"
-                        Width="24"
-                        Margin="0"
-                        HorizontalAlignment="Right"
-                        BorderBrush="Transparent"
-                        BorderThickness="0">
-                    <Path x:Name="arrow"
-                          HorizontalAlignment="Center"
-                          VerticalAlignment="Center"
-                          Data="M 0 0 L 4 4 L 8 0 Z"
-                          Fill="#c9d1d9" />
-                </Border>
-            </Border>
-            <ControlTemplate.Triggers>
-                <Trigger Property="IsMouseOver" Value="True">
-                    <Setter TargetName="templateRoot" Property="Background" Value="#30363d" />
-                    <Setter TargetName="arrow" Property="Fill" Value="#4fc3f7" />
-                </Trigger>
-                <Trigger Property="IsChecked" Value="True">
-                    <Setter TargetName="templateRoot" Property="BorderBrush" Value="#4fc3f7" />
-                </Trigger>
-            </ControlTemplate.Triggers>
-        </ControlTemplate>
-
-        <!-- Custom Dark Theme ComboBox Style -->
-        <Style x:Key="DarkComboBoxStyle" TargetType="{x:Type ComboBox}">
-            <Setter Property="Foreground" Value="#ffffff" />
-            <Setter Property="Background" Value="#21262d" />
-            <Setter Property="BorderBrush" Value="#388bfd" />
-            <Setter Property="BorderThickness" Value="1" />
-            <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Auto" />
-            <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Auto" />
-            <Setter Property="Padding" Value="10,4,24,4" />
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="{x:Type ComboBox}">
-                        <Grid x:Name="templateRoot" SnapsToDevicePixels="True">
-                            <ToggleButton x:Name="toggleButton"
-                                          Background="{TemplateBinding Background}"
-                                          BorderBrush="{TemplateBinding BorderBrush}"
-                                          BorderThickness="{TemplateBinding BorderThickness}"
-                                          ClickMode="Press"
-                                          Focusable="False"
-                                          IsChecked="{Binding IsDropDownOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}"
-                                          Template="{StaticResource ComboBoxToggleButton}" />
-                            <ContentPresenter x:Name="contentPresenter"
-                                              Margin="{TemplateBinding Padding}"
-                                              HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                              VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
-                                              Content="{TemplateBinding SelectionBoxItem}"
-                                              ContentStringFormat="{TemplateBinding SelectionBoxItemStringFormat}"
-                                              ContentTemplate="{TemplateBinding SelectionBoxItemTemplate}"
-                                              ContentTemplateSelector="{TemplateBinding ItemTemplateSelector}"
-                                              IsHitTestVisible="False"
-                                              SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}">
-                                <ContentPresenter.Resources>
-                                    <Style TargetType="{x:Type TextBlock}">
-                                        <Setter Property="Foreground" Value="#ffffff" />
-                                        <Setter Property="FontWeight" Value="SemiBold" />
-                                    </Style>
-                                </ContentPresenter.Resources>
-                            </ContentPresenter>
-                            <Popup x:Name="PART_Popup"
-                                   AllowsTransparency="True"
-                                   Focusable="False"
-                                   IsOpen="{Binding IsDropDownOpen, ElementName=toggleButton}"
-                                   Placement="Bottom"
-                                   PopupAnimation="Slide">
-                                <Border x:Name="dropDownBorder"
-                                        MinWidth="{Binding ActualWidth, ElementName=templateRoot}"
-                                        MaxHeight="{TemplateBinding MaxDropDownHeight}"
-                                        Background="#161b22"
-                                        BorderBrush="#388bfd"
-                                        BorderThickness="1"
-                                        CornerRadius="6"
-                                        Margin="0,2,0,0">
-                                    <ScrollViewer x:Name="DropDownScrollViewer">
-                                        <Grid x:Name="grid" RenderOptions.ClearTypeHint="Enabled">
-                                            <Canvas x:Name="canvas"
-                                                    Width="0"
-                                                    Height="0"
-                                                    HorizontalAlignment="Left"
-                                                    VerticalAlignment="Top">
-                                                <Rectangle x:Name="opaqueRect"
-                                                           Width="{Binding ActualWidth, ElementName=dropDownBorder}"
-                                                           Height="{Binding ActualHeight, ElementName=dropDownBorder}"
-                                                           Fill="#161b22" />
-                                            </Canvas>
-                                            <ItemsPresenter x:Name="ItemsPresenter"
-                                                            KeyboardNavigation.DirectionalNavigation="Contained"
-                                                            SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
-                                        </Grid>
-                                    </ScrollViewer>
-                                </Border>
-                            </Popup>
-                        </Grid>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
-    </Window.Resources>
-
-    <Grid Margin="25,15,25,15">
+    <Grid Margin="25,18,25,18">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
             <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
         <!-- Header -->
-        <StackPanel Grid.Row="0" Margin="0,0,0,15">
+        <StackPanel Grid.Row="0" Margin="0,0,0,14">
             <TextBlock x:Name="HeaderTitle"
                        Text="Preferences &amp; Settings"
                        FontSize="18"
                        FontWeight="Bold"
-                       Foreground="#ffffff" />
+                       Foreground="{StaticResource Brush.Text.Primary}" />
             <TextBlock x:Name="HeaderSubtitle"
                        Text="Customize interval timers, alerts, and system behaviors"
                        FontSize="11"
-                       Foreground="#8b949e"
+                       Foreground="{StaticResource Brush.Text.Secondary}"
                        Margin="0,3,0,0" />
         </StackPanel>
 
         <!-- Main Settings Cards -->
         <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
-            <StackPanel>
+            <StackPanel Margin="0,0,4,0">
                 <!-- Card 1: Intervals -->
-                <Border Background="#161b22"
-                        BorderBrush="#30363d"
+                <Border Background="{StaticResource Brush.Surface.Card}"
+                        BorderBrush="{StaticResource Brush.Border.Subtle}"
                         BorderThickness="1"
                         CornerRadius="10"
                         Padding="18,14"
@@ -156,7 +47,7 @@
                                    Text="TIMER INTERVALS"
                                    FontSize="11"
                                    FontWeight="Bold"
-                                   Foreground="#4fc3f7"
+                                   Foreground="{StaticResource Brush.Accent.Primary}"
                                    Margin="0,0,0,10" />
 
                         <!-- Eye Rest -->
@@ -164,11 +55,11 @@
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*" />
                                 <ColumnDefinition Width="Auto" />
-                                <ColumnDefinition Width="35" />
+                                <ColumnDefinition Width="38" />
                             </Grid.ColumnDefinitions>
-                            <TextBlock x:Name="EyeRestLabel" Text="Eye Rest Interval:" VerticalAlignment="Center" Foreground="#ffffff" FontSize="12" />
-                            <TextBox x:Name="TxtLookAway" Grid.Column="1" Width="55" Height="28" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Background="#21262d" Foreground="#ffffff" BorderBrush="#388bfd" BorderThickness="1" FontSize="12" FontWeight="SemiBold" SelectionBrush="#388bfd" />
-                            <TextBlock Grid.Column="2" Text="min" VerticalAlignment="Center" Margin="6,0,0,0" Foreground="#8b949e" FontSize="11" />
+                            <TextBlock x:Name="EyeRestLabel" Text="Eye Rest Interval:" VerticalAlignment="Center" Foreground="{StaticResource Brush.Text.Primary}" FontSize="12" />
+                            <TextBox x:Name="TxtLookAway" Grid.Column="1" Width="55" Height="28" MaxLength="3" Style="{StaticResource DarkNumericTextBoxStyle}" />
+                            <TextBlock x:Name="TxtLookAwayUnit" Grid.Column="2" Text="min" VerticalAlignment="Center" Margin="8,0,0,0" Foreground="{StaticResource Brush.Text.Secondary}" FontSize="11" />
                         </Grid>
 
                         <!-- Posture -->
@@ -176,11 +67,11 @@
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*" />
                                 <ColumnDefinition Width="Auto" />
-                                <ColumnDefinition Width="35" />
+                                <ColumnDefinition Width="38" />
                             </Grid.ColumnDefinitions>
-                            <TextBlock x:Name="PostureLabel" Text="Posture Check Interval:" VerticalAlignment="Center" Foreground="#ffffff" FontSize="12" />
-                            <TextBox x:Name="TxtPosture" Grid.Column="1" Width="55" Height="28" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Background="#21262d" Foreground="#ffffff" BorderBrush="#388bfd" BorderThickness="1" FontSize="12" FontWeight="SemiBold" SelectionBrush="#388bfd" />
-                            <TextBlock Grid.Column="2" Text="min" VerticalAlignment="Center" Margin="6,0,0,0" Foreground="#8b949e" FontSize="11" />
+                            <TextBlock x:Name="PostureLabel" Text="Posture Check Interval:" VerticalAlignment="Center" Foreground="{StaticResource Brush.Text.Primary}" FontSize="12" />
+                            <TextBox x:Name="TxtPosture" Grid.Column="1" Width="55" Height="28" MaxLength="3" Style="{StaticResource DarkNumericTextBoxStyle}" />
+                            <TextBlock x:Name="TxtPostureUnit" Grid.Column="2" Text="min" VerticalAlignment="Center" Margin="8,0,0,0" Foreground="{StaticResource Brush.Text.Secondary}" FontSize="11" />
                         </Grid>
 
                         <!-- Idle -->
@@ -188,11 +79,11 @@
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*" />
                                 <ColumnDefinition Width="Auto" />
-                                <ColumnDefinition Width="35" />
+                                <ColumnDefinition Width="38" />
                             </Grid.ColumnDefinitions>
-                            <TextBlock x:Name="IdleLabel" Text="Idle Inactivity Reset:" VerticalAlignment="Center" Foreground="#ffffff" FontSize="12" />
-                            <TextBox x:Name="TxtIdle" Grid.Column="1" Width="55" Height="28" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Background="#21262d" Foreground="#ffffff" BorderBrush="#388bfd" BorderThickness="1" FontSize="12" FontWeight="SemiBold" SelectionBrush="#388bfd" />
-                            <TextBlock Grid.Column="2" Text="min" VerticalAlignment="Center" Margin="6,0,0,0" Foreground="#8b949e" FontSize="11" />
+                            <TextBlock x:Name="IdleLabel" Text="Idle Inactivity Reset:" VerticalAlignment="Center" Foreground="{StaticResource Brush.Text.Primary}" FontSize="12" />
+                            <TextBox x:Name="TxtIdle" Grid.Column="1" Width="55" Height="28" MaxLength="2" Style="{StaticResource DarkNumericTextBoxStyle}" />
+                            <TextBlock x:Name="TxtIdleUnit" Grid.Column="2" Text="min" VerticalAlignment="Center" Margin="8,0,0,0" Foreground="{StaticResource Brush.Text.Secondary}" FontSize="11" />
                         </Grid>
 
                         <!-- Dismiss -->
@@ -200,42 +91,40 @@
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*" />
                                 <ColumnDefinition Width="Auto" />
-                                <ColumnDefinition Width="35" />
+                                <ColumnDefinition Width="38" />
                             </Grid.ColumnDefinitions>
-                            <TextBlock x:Name="DismissLabel" Text="Auto-dismiss Timeout:" VerticalAlignment="Center" Foreground="#ffffff" FontSize="12" />
-                            <TextBox x:Name="TxtDismiss" Grid.Column="1" Width="55" Height="28" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Background="#21262d" Foreground="#ffffff" BorderBrush="#388bfd" BorderThickness="1" FontSize="12" FontWeight="SemiBold" SelectionBrush="#388bfd" />
-                            <TextBlock Grid.Column="2" Text="sec" VerticalAlignment="Center" Margin="6,0,0,0" Foreground="#8b949e" FontSize="11" />
+                            <TextBlock x:Name="DismissLabel" Text="Auto-dismiss Timeout:" VerticalAlignment="Center" Foreground="{StaticResource Brush.Text.Primary}" FontSize="12" />
+                            <TextBox x:Name="TxtDismiss" Grid.Column="1" Width="55" Height="28" MaxLength="4" Style="{StaticResource DarkNumericTextBoxStyle}" />
+                            <TextBlock x:Name="TxtDismissUnit" Grid.Column="2" Text="sec" VerticalAlignment="Center" Margin="8,0,0,0" Foreground="{StaticResource Brush.Text.Secondary}" FontSize="11" />
                         </Grid>
                     </StackPanel>
                 </Border>
 
                 <!-- Card 2: System Preferences -->
-                <Border Background="#161b22"
-                        BorderBrush="#30363d"
+                <Border Background="{StaticResource Brush.Surface.Card}"
+                        BorderBrush="{StaticResource Brush.Border.Subtle}"
                         BorderThickness="1"
                         CornerRadius="10"
                         Padding="18,14"
-                        Margin="0,0,0,12">
+                        Margin="0,0,0,8">
                     <StackPanel>
                         <TextBlock x:Name="SecPreferencesLabel"
                                    Text="SYSTEM &amp; PREFERENCES"
                                    FontSize="11"
                                    FontWeight="Bold"
-                                   Foreground="#b388ff"
+                                   Foreground="{StaticResource Brush.Accent.Secondary}"
                                    Margin="0,0,0,10" />
 
                         <!-- Sound Checkbox -->
                         <CheckBox x:Name="ChkSound"
                                   Content="Play notification sound"
-                                  Foreground="#ffffff"
-                                  FontSize="12"
+                                  Style="{StaticResource DarkCheckBoxStyle}"
                                   Margin="0,6" />
 
                         <!-- Autostart Checkbox -->
                         <CheckBox x:Name="ChkAutoStart"
                                   Content="Start on Windows login"
-                                  Foreground="#ffffff"
-                                  FontSize="12"
+                                  Style="{StaticResource DarkCheckBoxStyle}"
                                   Margin="0,6" />
 
                         <!-- Language Dropdown -->
@@ -244,12 +133,12 @@
                                 <ColumnDefinition Width="*" />
                                 <ColumnDefinition Width="170" />
                             </Grid.ColumnDefinitions>
-                            <TextBlock x:Name="LanguageLabel" Text="Language:" VerticalAlignment="Center" Foreground="#ffffff" FontSize="12" />
+                            <TextBlock x:Name="LanguageLabel" Text="Language:" VerticalAlignment="Center" Foreground="{StaticResource Brush.Text.Primary}" FontSize="12" />
                             <ComboBox x:Name="CmbLanguage"
                                       Grid.Column="1"
                                       Height="28"
                                       Style="{StaticResource DarkComboBoxStyle}"
-                                      FontSize="12">
+                                      SelectionChanged="CmbLanguage_SelectionChanged">
                                 <ComboBoxItem Content="English" Tag="en" />
                                 <ComboBoxItem Content="Español" Tag="es" />
                             </ComboBox>
@@ -261,12 +150,11 @@
                                 <ColumnDefinition Width="*" />
                                 <ColumnDefinition Width="170" />
                             </Grid.ColumnDefinitions>
-                            <TextBlock x:Name="DisplayModeLabel" Text="Alert Display:" VerticalAlignment="Center" Foreground="#ffffff" FontSize="12" />
+                            <TextBlock x:Name="DisplayModeLabel" Text="Alert Display:" VerticalAlignment="Center" Foreground="{StaticResource Brush.Text.Primary}" FontSize="12" />
                             <ComboBox x:Name="CmbDisplayMode"
                                       Grid.Column="1"
                                       Height="28"
-                                      Style="{StaticResource DarkComboBoxStyle}"
-                                      FontSize="12">
+                                      Style="{StaticResource DarkComboBoxStyle}">
                                 <ComboBoxItem x:Name="CmbItemDisplayAll" Content="All Monitors" Tag="all" />
                                 <ComboBoxItem x:Name="CmbItemDisplayActive" Content="Active Screen (Cursor)" Tag="active" />
                             </ComboBox>
@@ -276,31 +164,62 @@
             </StackPanel>
         </ScrollViewer>
 
+        <!-- Inline Validation Error Banner -->
+        <TextBlock x:Name="TxtValidationError"
+                   Grid.Row="2"
+                   Margin="0,6,0,6"
+                   FontSize="11"
+                   Foreground="{StaticResource Brush.Status.Danger}"
+                   TextWrapping="Wrap"
+                   HorizontalAlignment="Center"
+                   TextAlignment="Center"
+                   Visibility="Collapsed" />
+
         <!-- Footer Buttons -->
-        <Grid Grid.Row="2" Margin="0,15,0,0">
+        <Grid Grid.Row="3" Margin="0,10,0,0">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
 
-            <TextBlock Text="Screen Health Guardian v2.1.3"
-                       VerticalAlignment="Center"
-                       FontSize="10"
-                       Foreground="#484f58" />
+            <!-- Quick Action Buttons & Version -->
+            <StackPanel Grid.Column="0" VerticalAlignment="Center">
+                <TextBlock Text="Screen Health Guardian v2.2.0"
+                           FontSize="10"
+                           Foreground="{StaticResource Brush.Text.Secondary}"
+                           Margin="0,0,0,4" />
+                <StackPanel Orientation="Horizontal">
+                    <Button x:Name="BtnPreviewAlert"
+                            Content="Preview Alert"
+                            Click="BtnPreviewAlert_Click"
+                            Style="{StaticResource ModernDarkButton}"
+                            Padding="8,3"
+                            FontSize="11"
+                            Margin="0,0,6,0" />
+                    <Button x:Name="BtnResetDefaults"
+                            Content="Reset Defaults"
+                            Click="BtnResetDefaults_Click"
+                            Style="{StaticResource ModernDarkButton}"
+                            Padding="8,3"
+                            FontSize="11" />
+                </StackPanel>
+            </StackPanel>
 
             <Button x:Name="BtnCancel"
                     Grid.Column="1"
                     Content="Cancel"
                     Click="BtnCancel_Click"
                     Style="{StaticResource ModernDarkButton}"
+                    IsCancel="True"
                     Margin="0,0,10,0" />
 
             <Button x:Name="BtnSave"
                     Grid.Column="2"
                     Content="Save Preferences"
                     Click="BtnSave_Click"
-                    Style="{StaticResource ModernPrimaryButton}" />
+                    Style="{StaticResource ModernPrimaryButton}"
+                    IsDefault="True" />
         </Grid>
     </Grid>
 </Window>

@@ -13,6 +13,7 @@ public partial class AlertOverlayWindow : Window
     private readonly DispatcherTimer _dismissTimer;
     private readonly int _totalSeconds;
     private readonly Action? _onDismissed;
+    private readonly Action? _onSnoozed;
     private bool _dismissed = false;
 
     public AlertOverlayWindow(
@@ -24,12 +25,15 @@ public partial class AlertOverlayWindow : Window
         DisplayInfo? targetDisplay = null,
         int autoDismissSec = 30,
         bool soundEnabled = true,
-        Action? onDismissed = null)
+        Action? onDismissed = null,
+        string? snoozeButtonText = null,
+        Action? onSnoozed = null)
     {
         InitializeComponent();
 
         _totalSeconds = autoDismissSec;
         _onDismissed = onDismissed;
+        _onSnoozed = onSnoozed;
 
         // Position window within target display bounds
         if (targetDisplay != null)
@@ -47,6 +51,16 @@ public partial class AlertOverlayWindow : Window
         TitleBlock.Text = title;
         MessageBlock.Text = message;
         DismissButton.Content = buttonText;
+
+        if (!string.IsNullOrWhiteSpace(snoozeButtonText))
+        {
+            SnoozeButton.Content = snoozeButtonText;
+            SnoozeButton.Visibility = Visibility.Visible;
+        }
+        else
+        {
+            SnoozeButton.Visibility = Visibility.Collapsed;
+        }
 
         var accentBrush = (SolidColorBrush)new BrushConverter().ConvertFrom(accentHex)!;
         TitleBlock.Foreground = accentBrush;
@@ -78,6 +92,7 @@ public partial class AlertOverlayWindow : Window
 
         AutoDismissProgress.Maximum = _totalSeconds;
         AutoDismissProgress.Value = _totalSeconds;
+        AutoDismissLabel.Text = $"{_totalSeconds}s";
 
         _dismissTimer = new DispatcherTimer
         {
@@ -92,6 +107,7 @@ public partial class AlertOverlayWindow : Window
         else
         {
             AutoDismissProgress.Visibility = Visibility.Collapsed;
+            AutoDismissLabel.Visibility = Visibility.Collapsed;
         }
     }
 
@@ -169,6 +185,8 @@ public partial class AlertOverlayWindow : Window
         else
         {
             AutoDismissProgress.Value = (remaining / totalMs) * _totalSeconds;
+            int remainingSec = (int)Math.Ceiling(remaining / 1000.0);
+            AutoDismissLabel.Text = $"{remainingSec}s";
         }
     }
 
@@ -177,9 +195,9 @@ public partial class AlertOverlayWindow : Window
         Dismiss();
     }
 
-    private void Window_MouseDown(object sender, MouseButtonEventArgs e)
+    private void SnoozeButton_Click(object sender, RoutedEventArgs e)
     {
-        Dismiss();
+        Snooze();
     }
 
     private void Window_KeyDown(object sender, KeyEventArgs e)
@@ -198,5 +216,15 @@ public partial class AlertOverlayWindow : Window
         _dismissTimer.Stop();
         Close();
         _onDismissed?.Invoke();
+    }
+
+    public void Snooze()
+    {
+        if (_dismissed) return;
+        _dismissed = true;
+
+        _dismissTimer.Stop();
+        Close();
+        _onSnoozed?.Invoke();
     }
 }

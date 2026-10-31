@@ -2,7 +2,7 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="Screen Health Guardian Alert"
-        Height="380" Width="600"
+        Height="400" Width="600"
         WindowStyle="None"
         AllowsTransparency="True"
         Background="Transparent"
@@ -10,7 +10,6 @@
         ShowInTaskbar="False"
         WindowStartupLocation="Manual"
         Opacity="0"
-        MouseDown="Window_MouseDown"
         KeyDown="Window_KeyDown">
 
     <Window.Triggers>
@@ -18,18 +17,18 @@
             <BeginStoryboard>
                 <Storyboard>
                     <DoubleAnimation Storyboard.TargetProperty="Opacity"
-                                     From="0.0" To="0.96" Duration="0:0:0.35" />
+                                     From="0.0" To="0.97" Duration="0:0:0.3" />
                 </Storyboard>
             </BeginStoryboard>
         </EventTrigger>
     </Window.Triggers>
 
-    <Border Background="#0f0f23"
-            BorderBrush="#292b4a"
+    <Border Background="{StaticResource Brush.Surface.Canvas}"
+            BorderBrush="{StaticResource Brush.Border.Subtle}"
             BorderThickness="1"
             CornerRadius="16"
             Padding="35,25">
-        
+
         <Grid>
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
@@ -44,15 +43,15 @@
                     Grid.Row="0"
                     Width="68" Height="68"
                     CornerRadius="34"
-                    Background="#16182e"
-                    BorderBrush="#292b4a"
+                    Background="{StaticResource Brush.Surface.Card}"
+                    BorderBrush="{StaticResource Brush.Border.Subtle}"
                     BorderThickness="1.5"
                     HorizontalAlignment="Center"
                     Margin="0,0,0,10">
                 <TextBlock x:Name="EmojiBlock"
                            Text="👀"
                            FontSize="32"
-                           Foreground="#ffffff"
+                           Foreground="{StaticResource Brush.Text.Primary}"
                            TextAlignment="Center"
                            HorizontalAlignment="Center"
                            VerticalAlignment="Center"
@@ -69,7 +68,7 @@
                        Text="Rest Your Eyes"
                        FontSize="20"
                        FontWeight="Bold"
-                       Foreground="#4fc3f7"
+                       Foreground="{StaticResource Brush.Accent.Primary}"
                        HorizontalAlignment="Center"
                        FontFamily="Segoe UI"
                        Margin="0,0,0,8" />
@@ -79,7 +78,7 @@
                        Grid.Row="2"
                        Text="Look at an object at least 20 feet (6m) away for 20 seconds to reduce eye strain."
                        FontSize="13"
-                       Foreground="#b0bec5"
+                       Foreground="{StaticResource Brush.Text.Secondary}"
                        TextWrapping="Wrap"
                        TextAlignment="Center"
                        HorizontalAlignment="Center"
@@ -88,25 +87,43 @@
                        MaxWidth="480"
                        Margin="0,0,0,15" />
 
-            <!-- Dismiss Button -->
-            <Button x:Name="DismissButton"
-                    Grid.Row="3"
-                    Content="I'm looking away (Done)"
-                    Click="DismissButton_Click"
-                    Style="{StaticResource ModernDarkButton}"
-                    Padding="28,10"
-                    FontSize="12"
-                    FontWeight="Bold"
-                    HorizontalAlignment="Center" />
+            <!-- Action Buttons: Snooze & Dismiss -->
+            <StackPanel Grid.Row="3"
+                        Orientation="Horizontal"
+                        HorizontalAlignment="Center"
+                        Margin="0,0,0,10">
+                <Button x:Name="SnoozeButton"
+                        Content="Snooze (5m)"
+                        Click="SnoozeButton_Click"
+                        Style="{StaticResource ModernDarkButton}"
+                        Padding="20,9"
+                        FontSize="12"
+                        Margin="0,0,12,0" />
 
-            <!-- Progress countdown bar -->
-            <ProgressBar x:Name="AutoDismissProgress"
-                         Grid.Row="4"
-                         Height="4"
-                         Margin="0,18,0,0"
-                         Foreground="#4fc3f7"
-                         Background="#1b1c36"
-                         BorderThickness="0" />
+                <Button x:Name="DismissButton"
+                        Content="I'm looking away (Done)"
+                        Click="DismissButton_Click"
+                        Style="{StaticResource ModernPrimaryButton}"
+                        Padding="24,9"
+                        FontSize="12"
+                        FontWeight="Bold"
+                        IsDefault="True" />
+            </StackPanel>
+
+            <!-- Countdown Progress & Label -->
+            <StackPanel Grid.Row="4" Margin="0,5,0,0">
+                <ProgressBar x:Name="AutoDismissProgress"
+                             Height="4"
+                             Foreground="{StaticResource Brush.Accent.Primary}"
+                             Background="{StaticResource Brush.Surface.Control}"
+                             BorderThickness="0" />
+                <TextBlock x:Name="AutoDismissLabel"
+                           Text="30s"
+                           FontSize="11"
+                           Foreground="{StaticResource Brush.Text.Secondary}"
+                           HorizontalAlignment="Center"
+                           Margin="0,6,0,0" />
+            </StackPanel>
         </Grid>
     </Border>
 </Window>

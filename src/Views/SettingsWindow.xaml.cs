@@ -1,6 +1,7 @@
 using System.Windows;
 using System.Windows.Controls;
 using Microsoft.Win32;
+using ScreenHealthGuardian.Models;
 using ScreenHealthGuardian.Services;
 
 namespace ScreenHealthGuardian.Views;
@@ -10,17 +11,25 @@ public partial class SettingsWindow : Window
     private readonly ConfigService _configService;
     private readonly LocalizationService _locService;
     private readonly Action? _onSaved;
+    private readonly Action<AppConfig>? _onPreviewAlert;
+    private bool _isLoaded = false;
 
-    public SettingsWindow(ConfigService configService, LocalizationService locService, Action? onSaved = null)
+    public SettingsWindow(
+        ConfigService configService,
+        LocalizationService locService,
+        Action? onSaved = null,
+        Action<AppConfig>? onPreviewAlert = null)
     {
         InitializeComponent();
 
         _configService = configService;
         _locService = locService;
         _onSaved = onSaved;
+        _onPreviewAlert = onPreviewAlert;
 
         LoadSettings();
         ApplyLocalization();
+        _isLoaded = true;
     }
 
     private void LoadSettings()
@@ -61,6 +70,7 @@ public partial class SettingsWindow : Window
 
     private void ApplyLocalization()
     {
+        Title = _locService.Get("settings_window_title");
         HeaderTitle.Text = _locService.Get("settings_title");
         HeaderSubtitle.Text = _locService.Get("settings_subtitle");
         SecIntervalsLabel.Text = _locService.Get("settings_sec_intervals");
@@ -68,6 +78,11 @@ public partial class SettingsWindow : Window
         PostureLabel.Text = _locService.Get("settings_posture");
         IdleLabel.Text = _locService.Get("settings_idle");
         DismissLabel.Text = _locService.Get("settings_dismiss");
+
+        TxtLookAwayUnit.Text = _locService.Get("unit_min");
+        TxtPostureUnit.Text = _locService.Get("unit_min");
+        TxtIdleUnit.Text = _locService.Get("unit_min");
+        TxtDismissUnit.Text = _locService.Get("unit_sec");
 
         SecPreferencesLabel.Text = _locService.Get("settings_sec_preferences");
         ChkSound.Content = _locService.Get("settings_sound");
@@ -77,16 +92,38 @@ public partial class SettingsWindow : Window
         CmbItemDisplayAll.Content = _locService.Get("settings_display_mode_all");
         CmbItemDisplayActive.Content = _locService.Get("settings_display_mode_active");
 
+        BtnPreviewAlert.Content = _locService.Get("settings_preview_alert");
+        BtnResetDefaults.Content = _locService.Get("settings_reset_defaults");
         BtnCancel.Content = _locService.Get("settings_cancel");
         BtnSave.Content = _locService.Get("settings_save");
     }
 
+    private void CmbLanguage_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        if (!_isLoaded) return;
+
+        if (CmbLanguage.SelectedItem is ComboBoxItem selectedLang)
+        {
+            string lang = (string)selectedLang.Tag;
+            _locService.SetLanguage(lang);
+            ApplyLocalization();
+        }
+    }
+
     private void BtnSave_Click(object sender, RoutedEventArgs e)
     {
-        if (!int.TryParse(TxtLookAway.Text, out int lookAway) || lookAway < 1) lookAway = 20;
-        if (!int.TryParse(TxtPosture.Text, out int posture) || posture < 1) posture = 45;
-        if (!int.TryParse(TxtIdle.Text, out int idleMin) || idleMin < 1) idleMin = 2;
-        if (!int.TryParse(TxtDismiss.Text, out int dismiss) || dismiss < 5) dismiss = 30;
+        TxtValidationError.Visibility = Visibility.Collapsed;
+
+        // Strict range validation according to UX error prevention heuristics
+        if (!int.TryParse(TxtLookAway.Text.Trim(), out int lookAway) || lookAway < 1 || lookAway > 480 ||
+            !int.TryParse(TxtPosture.Text.Trim(), out int posture) || posture < 1 || posture > 480 ||
+            !int.TryParse(TxtIdle.Text.Trim(), out int idleMin) || idleMin < 1 || idleMin > 60 ||
+            !int.TryParse(TxtDismiss.Text.Trim(), out int dismiss) || dismiss < 5 || dismiss > 300)
+        {
+            TxtValidationError.Text = _locService.Get("settings_err_invalid_values");
+            TxtValidationError.Visibility = Visibility.Visible;
+            return;
+        }
 
         string lang = "en";
         if (CmbLanguage.SelectedItem is ComboBoxItem selectedLang)
@@ -120,6 +157,48 @@ public partial class SettingsWindow : Window
 
         _onSaved?.Invoke();
         Close();
+    }
+
+    private void BtnPreviewAlert_Click(object sender, RoutedEventArgs e)
+    {
+        int dismiss = 10; // Keep preview compact
+        if (int.TryParse(TxtDismiss.Text.Trim(), out int parsedDismiss) && parsedDismiss >= 5 && parsedDismiss <= 60)
+        {
+            dismiss = parsedDismiss;
+        }
+
+        string displayMode = "all";
+        if (CmbDisplayMode.SelectedItem is ComboBoxItem selectedDisplay)
+        {
+            displayMode = (string)selectedDisplay.Tag;
+        }
+
+        string lang = "en";
+        if (CmbLanguage.SelectedItem is ComboBoxItem selectedLang)
+        {
+            lang = (string)selectedLang.Tag;
+        }
+
+        var previewConfig = new AppConfig
+        {
+            DisplayMode = displayMode,
+            SoundEnabled = ChkSound.IsChecked ?? true,
+            AlertAutoDismissSec = dismiss,
+            Language = lang
+        };
+
+        _onPreviewAlert?.Invoke(previewConfig);
+    }
+
+    private void BtnResetDefaults_Click(object sender, RoutedEventArgs e)
+    {
+        TxtLookAway.Text = "20";
+        TxtPosture.Text = "45";
+        TxtIdle.Text = "2";
+        TxtDismiss.Text = "30";
+        ChkSound.IsChecked = true;
+        ChkAutoStart.IsChecked = false;
+        TxtValidationError.Visibility = Visibility.Collapsed;
     }
 
     private void BtnCancel_Click(object sender, RoutedEventArgs e)

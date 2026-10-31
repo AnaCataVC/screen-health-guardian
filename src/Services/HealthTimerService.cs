@@ -73,6 +73,25 @@ public class HealthTimerService
         OnStateChanged?.Invoke();
     }
 
+    public void AlertSnoozed(bool wasLookAway, int snoozeMinutes = 5)
+    {
+        _isAlertActive = false;
+        var config = _configService.Current;
+        double snoozeSec = Math.Max(1, snoozeMinutes) * 60.0;
+
+        if (wasLookAway)
+        {
+            double limit = config.LookAwayIntervalMin * 60.0;
+            _activeSecondsLookAway = Math.Max(0, limit - snoozeSec);
+        }
+        else
+        {
+            double limit = config.PostureIntervalMin * 60.0;
+            _activeSecondsPosture = Math.Max(0, limit - snoozeSec);
+        }
+        OnStateChanged?.Invoke();
+    }
+
     public (int LookAwayMin, int PostureMin) GetRemainingMinutes()
     {
         if (_isPaused) return (0, 0);

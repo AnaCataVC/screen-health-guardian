@@ -4,6 +4,7 @@ using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using H.NotifyIcon;
+using ScreenHealthGuardian.Models;
 using ScreenHealthGuardian.Services;
 using ScreenHealthGuardian.Views;
 
@@ -18,9 +19,14 @@ public partial class App : Application
     private LocalizationService _locService = null!;
     private HealthTimerService _timerService = null!;
     private TaskbarIcon? _trayIcon;
+    private MenuItem? _trayStatusMenuItem;
+    private SettingsWindow? _settingsWindow;
 
     protected override void OnStartup(StartupEventArgs e)
     {
+        // 0. Global Exception Handling & Diagnostic Logging (desktop_app_stability.md)
+        ConfigureGlobalExceptionHandling();
+
         // 1. Single Instance Check via Win32 Mutex
         _singleInstanceMutex = new Mutex(true, MutexName, out bool isNewInstance);
         if (!isNewInstance)
@@ -40,14 +46,63 @@ public partial class App : Application
         _timerService = new HealthTimerService(_configService);
         _timerService.OnLookAwayTriggered += ShowLookAwayAlert;
         _timerService.OnPostureTriggered += ShowPostureAlert;
-        _timerService.OnStateChanged += UpdateTrayTooltip;
+        _timerService.OnStateChanged += UpdateTrayStatusAndTooltip;
 
         // 3. Initialize System Tray Icon
         InitializeTrayIcon();
 
         // 4. Start Health Monitor Timer
         _timerService.Start();
-        UpdateTrayTooltip();
+        UpdateTrayStatusAndTooltip();
+    }
+
+    private void ConfigureGlobalExceptionHandling()
+    {
+        string logDir = Path.Combine(
+            Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+            "ScreenHealthGuardian",
+            "Logs"
+        );
+
+        void WriteLog(string prefix, Exception? ex)
+        {
+            try
+            {
+                if (!Directory.Exists(logDir))
+                {
+                    Directory.CreateDirectory(logDir);
+                }
+
+                string crashPath = Path.Combine(logDir, "crash.log");
+                string logEntry = $"[{DateTime.Now:yyyy-MM-dd HH:mm:ss}] [{prefix}] {ex?.GetType().FullName}: {ex?.Message}\n{ex?.StackTrace}\n";
+                if (ex?.InnerException != null)
+                {
+                    logEntry += $"Inner: {ex.InnerException.GetType().FullName}: {ex.InnerException.Message}\n{ex.InnerException.StackTrace}\n";
+                }
+                logEntry += new string('-', 80) + "\n";
+                File.AppendAllText(crashPath, logEntry);
+            }
+            catch
+            {
+                // Silently avoid cascading crash if logger fails
+            }
+        }
+
+        DispatcherUnhandledException += (s, e) =>
+        {
+            WriteLog("DispatcherUnhandledException", e.Exception);
+        };
+
+        AppDomain.CurrentDomain.UnhandledException += (s, e) =>
+        {
+            WriteLog("AppDomainUnhandledException", e.ExceptionObject as Exception);
+        };
+
+        TaskScheduler.UnobservedTaskException += (s, e) =>
+        {
+            WriteLog("TaskSchedulerUnobservedTaskException", e.Exception);
+            e.SetObserved();
+        };
     }
 
     private void InitializeTrayIcon()
@@ -94,20 +149,16 @@ public partial class App : Application
         if (_trayIcon == null) return;
 
         var menu = new ContextMenu();
+        menu.Opened += (s, e) => UpdateTrayStatusHeader();
 
         // Status Header Item
-        var (lookMin, postMin) = _timerService.GetRemainingMinutes();
-        string statusText = _timerService.IsPaused 
-            ? _locService.Get("status_paused") 
-            : $"👀 {lookMin}min  |  ✨ {postMin}min";
-
-        var statusItem = new MenuItem
+        _trayStatusMenuItem = new MenuItem
         {
-            Header = statusText,
             IsEnabled = false,
             FontWeight = FontWeights.Bold
         };
-        menu.Items.Add(statusItem);
+        UpdateTrayStatusHeader();
+        menu.Items.Add(_trayStatusMenuItem);
         menu.Items.Add(new Separator());
 
         // Pause / Resume Item
@@ -138,8 +189,22 @@ public partial class App : Application
         _trayIcon.ContextMenu = menu;
     }
 
-    private void UpdateTrayTooltip()
+    private void UpdateTrayStatusHeader()
     {
+        if (_trayStatusMenuItem == null) return;
+
+        var (lookMin, postMin) = _timerService.GetRemainingMinutes();
+        string statusText = _timerService.IsPaused 
+            ? _locService.Get("status_paused") 
+            : $"👀 {lookMin}min  |  ✨ {postMin}min";
+
+        _trayStatusMenuItem.Header = statusText;
+    }
+
+    private void UpdateTrayStatusAndTooltip()
+    {
+        UpdateTrayStatusHeader();
+
         if (_trayIcon == null) return;
 
         var (lookMin, postMin) = _timerService.GetRemainingMinutes();
@@ -159,10 +224,18 @@ public partial class App : Application
         string message,
         string buttonText,
         string accentHex,
-        bool wasLookAway)
+        bool wasLookAway,
+        bool isPreview = false,
+        string? overrideDisplayMode = null,
+        bool? overrideSound = null,
+        int? overrideDismissSec = null)
     {
         var config = _configService.Current;
-        IReadOnlyList<DisplayInfo> displays = (config.DisplayMode?.ToLowerInvariant() == "active")
+        string displayMode = overrideDisplayMode ?? config.DisplayMode ?? "all";
+        bool soundEnabled = overrideSound ?? config.SoundEnabled;
+        int autoDismissSec = overrideDismissSec ?? config.AlertAutoDismissSec;
+
+        IReadOnlyList<DisplayInfo> displays = (displayMode.ToLowerInvariant() == "active")
             ? new[] { DisplayManager.GetCursorDisplay() }
             : DisplayManager.GetDisplays();
 
@@ -174,20 +247,34 @@ public partial class App : Application
 
         void OnSessionDismissed()
         {
-            // Ensure dismissal callback and window teardown runs exactly once per alert trigger
             if (Interlocked.Exchange(ref isDismissedFlag, 1) == 0)
             {
-                _timerService.AlertDismissed(wasLookAway);
+                if (!isPreview)
+                {
+                    _timerService.AlertDismissed(wasLookAway);
+                }
+                DismissAllActiveOverlays();
+            }
+        }
+
+        void OnSessionSnoozed()
+        {
+            if (Interlocked.Exchange(ref isDismissedFlag, 1) == 0)
+            {
+                if (!isPreview)
+                {
+                    _timerService.AlertSnoozed(wasLookAway);
+                }
                 DismissAllActiveOverlays();
             }
         }
 
         bool soundPlayed = false;
+        string? snoozeText = isPreview ? null : _locService.Get("alert_snooze_btn");
 
         foreach (var display in displays)
         {
-            // Play sound once on the primary display (or first display)
-            bool shouldPlaySound = config.SoundEnabled && !soundPlayed && (display.IsPrimary || displays.Count == 1);
+            bool shouldPlaySound = soundEnabled && !soundPlayed && (display.IsPrimary || displays.Count == 1);
             if (shouldPlaySound)
             {
                 soundPlayed = true;
@@ -200,17 +287,18 @@ public partial class App : Application
                 buttonText: buttonText,
                 accentHex: accentHex,
                 targetDisplay: display,
-                autoDismissSec: config.AlertAutoDismissSec,
+                autoDismissSec: autoDismissSec,
                 soundEnabled: shouldPlaySound,
-                onDismissed: OnSessionDismissed
+                onDismissed: OnSessionDismissed,
+                snoozeButtonText: snoozeText,
+                onSnoozed: isPreview ? null : OnSessionSnoozed
             );
 
             _activeOverlays.Add(window);
             window.Show();
         }
 
-        // If sound was enabled but not played yet, play once
-        if (config.SoundEnabled && !soundPlayed && _activeOverlays.Count > 0)
+        if (soundEnabled && !soundPlayed && _activeOverlays.Count > 0)
         {
             try
             {
@@ -267,19 +355,53 @@ public partial class App : Application
         );
     }
 
+    private void ShowPreviewAlert(AppConfig previewConfig)
+    {
+        ShowMultiMonitorAlert(
+            emoji: "👀",
+            title: _locService.Get("alert_preview_title"),
+            message: _locService.Get("alert_preview_msg"),
+            buttonText: _locService.Get("alert_look_away_btn"),
+            accentHex: "#4fc3f7",
+            wasLookAway: true,
+            isPreview: true,
+            overrideDisplayMode: previewConfig.DisplayMode,
+            overrideSound: previewConfig.SoundEnabled,
+            overrideDismissSec: previewConfig.AlertAutoDismissSec
+        );
+    }
+
     private void ShowSettings()
     {
-        var win = new SettingsWindow(_configService, _locService, onSaved: () =>
+        if (_settingsWindow != null && _settingsWindow.IsLoaded)
         {
-            RebuildTrayMenu();
-            UpdateTrayTooltip();
-        });
-        win.ShowDialog();
+            if (_settingsWindow.WindowState == WindowState.Minimized)
+            {
+                _settingsWindow.WindowState = WindowState.Normal;
+            }
+            _settingsWindow.Activate();
+            return;
+        }
+
+        _settingsWindow = new SettingsWindow(
+            _configService,
+            _locService,
+            onSaved: () =>
+            {
+                RebuildTrayMenu();
+                UpdateTrayStatusAndTooltip();
+            },
+            onPreviewAlert: previewConfig => ShowPreviewAlert(previewConfig)
+        );
+
+        _settingsWindow.Closed += (s, e) => _settingsWindow = null;
+        _settingsWindow.Show();
     }
 
     private void ExitApplication()
     {
         DismissAllActiveOverlays();
+        _settingsWindow?.Close();
         _timerService.Stop();
         _trayIcon?.Dispose();
         try
