@@ -66,6 +66,18 @@ public partial class AlertOverlayWindow : Window
         TitleBlock.Foreground = accentBrush;
         AutoDismissProgress.Foreground = accentBrush;
 
+        if (string.Equals(accentHex, "#b388ff", StringComparison.OrdinalIgnoreCase))
+        {
+            if (TryFindResource("ModernSecondaryAccentButton") is Style secondaryStyle)
+            {
+                DismissButton.Style = secondaryStyle;
+            }
+            else
+            {
+                DismissButton.Background = accentBrush;
+            }
+        }
+
         if (string.IsNullOrWhiteSpace(emoji))
         {
             EmojiBadge.Visibility = Visibility.Collapsed;
