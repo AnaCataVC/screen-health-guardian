@@ -27,6 +27,7 @@ A high-performance, ultra-lightweight Windows desktop application designed to pr
 
 - **Native Win32 Activity Detection**: Uses `GetLastInputInfo` to track real user engagement without polling overhead.
 - **Hardware-Accelerated Overlays**: Smooth WPF semi-transparent overlays with progress countdown and auto-dismiss.
+- **Habit & Compliance Tracking**: Guided 20-second active rest countdowns tracking respected, skipped, and snoozed breaks with weekly vs. lifetime stats, 6-month rolling retention, and stacked ratio progress bars in Preferences.
 - **Modern System Tray**: Powered by `H.NotifyIcon` with interactive tooltips and live time indicators.
 - **Persistent Preferences**: JSON-based settings saved to `%APPDATA%\ScreenHealthGuardian\config.json`.
 - **Zero Antivirus False Positives**: Native PE executable built with .NET.

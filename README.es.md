@@ -28,6 +28,7 @@ Una aplicación nativa de alto rendimiento y ultraligera para Windows diseñada 
 
 - **Detección Nativa de Inactividad**: Consulta directa a `GetLastInputInfo` (Win32) sin consumir CPU.
 - **Overlays con Aceleración por GPU**: Ventanas WPF translúcidas con barra regresiva de auto-cierre.
+- **Seguimiento de Hábitos y Adherencia**: Descanso visual guiado de 20 segundos con métricas de alertas respetadas, omitidas y pospuestas, comparativas semanales e históricas y retención rodante de 6 meses.
 - **Bandeja del Sistema**: Integración fluida con `H.NotifyIcon`, menús contextuales y tooltips dinámicos.
 - **Configuración Persistente**: Ajustes guardados en formato JSON en `%APPDATA%\ScreenHealthGuardian\config.json`.
 - **Sin Falsos Positivos de Antivirus**: Binario nativo PE compilado con .NET.
