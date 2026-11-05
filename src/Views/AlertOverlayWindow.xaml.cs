@@ -12,9 +12,18 @@ public partial class AlertOverlayWindow : Window
 {
     private readonly DispatcherTimer _dismissTimer;
     private readonly int _totalSeconds;
-    private readonly Action? _onDismissed;
+    private readonly Action? _onCompleted;
+    private readonly Action? _onSkipped;
     private readonly Action? _onSnoozed;
+    private readonly bool _isGuidedMode;
+    private readonly string? _restingTextFormat;
+    private readonly string? _completedText;
+    private readonly bool _soundEnabled;
+
+    private bool _isCompleted = false;
     private bool _dismissed = false;
+    private double _elapsedMs = 0;
+    private DispatcherTimer? _graceTimer;
 
     public AlertOverlayWindow(
         string emoji,
@@ -25,14 +34,23 @@ public partial class AlertOverlayWindow : Window
         DisplayInfo? targetDisplay = null,
         int autoDismissSec = 30,
         bool soundEnabled = true,
-        Action? onDismissed = null,
+        bool isGuidedLookAway = false,
+        string? restingTextFormat = null,
+        string? completedText = null,
+        Action? onCompleted = null,
+        Action? onSkipped = null,
         string? snoozeButtonText = null,
         Action? onSnoozed = null)
     {
         InitializeComponent();
 
-        _totalSeconds = autoDismissSec;
-        _onDismissed = onDismissed;
+        _isGuidedMode = isGuidedLookAway;
+        _totalSeconds = isGuidedLookAway ? 20 : autoDismissSec;
+        _restingTextFormat = restingTextFormat;
+        _completedText = completedText;
+        _soundEnabled = soundEnabled;
+        _onCompleted = onCompleted;
+        _onSkipped = onSkipped;
         _onSnoozed = onSnoozed;
 
         // Position window within target display bounds
@@ -66,7 +84,15 @@ public partial class AlertOverlayWindow : Window
         TitleBlock.Foreground = accentBrush;
         AutoDismissProgress.Foreground = accentBrush;
 
-        if (string.Equals(accentHex, "#b388ff", StringComparison.OrdinalIgnoreCase))
+        if (_isGuidedMode)
+        {
+            // In guided mode, DismissButton acts as "Skip" CTA with subtle dark button styling
+            if (TryFindResource("ModernDarkButton") is Style darkStyle)
+            {
+                DismissButton.Style = darkStyle;
+            }
+        }
+        else if (string.Equals(accentHex, "#b388ff", StringComparison.OrdinalIgnoreCase))
         {
             if (TryFindResource("ModernSecondaryAccentButton") is Style secondaryStyle)
             {
@@ -104,7 +130,7 @@ public partial class AlertOverlayWindow : Window
 
         AutoDismissProgress.Maximum = _totalSeconds;
         AutoDismissProgress.Value = _totalSeconds;
-        AutoDismissLabel.Text = $"{_totalSeconds}s";
+        UpdateProgressLabel(_totalSeconds);
 
         _dismissTimer = new DispatcherTimer
         {
@@ -123,10 +149,6 @@ public partial class AlertOverlayWindow : Window
         }
     }
 
-    /// <summary>
-    /// Calculates the optical center offset between the WPF TextBlock layout box
-    /// and the actual rendered glyph ink bounding box for a given font and size.
-    /// </summary>
     public static (double OffsetX, double OffsetY) CalculateGlyphCenterOffset(
         string text,
         FontFamily fontFamily,
@@ -182,7 +204,17 @@ public partial class AlertOverlayWindow : Window
         EmojiBlock.RenderTransform = new TranslateTransform(-offsetX, -offsetY);
     }
 
-    private double _elapsedMs = 0;
+    private void UpdateProgressLabel(int remainingSec)
+    {
+        if (_isGuidedMode && !string.IsNullOrWhiteSpace(_restingTextFormat))
+        {
+            AutoDismissLabel.Text = string.Format(_restingTextFormat, remainingSec);
+        }
+        else
+        {
+            AutoDismissLabel.Text = $"{remainingSec}s";
+        }
+    }
 
     private void DismissTimer_Tick(object? sender, EventArgs e)
     {
@@ -192,19 +224,81 @@ public partial class AlertOverlayWindow : Window
 
         if (remaining <= 0)
         {
-            Dismiss();
+            _dismissTimer.Stop();
+
+            if (_isGuidedMode && !_isCompleted)
+            {
+                TransitionToCompletedState();
+            }
+            else
+            {
+                Complete();
+            }
         }
         else
         {
             AutoDismissProgress.Value = (remaining / totalMs) * _totalSeconds;
             int remainingSec = (int)Math.Ceiling(remaining / 1000.0);
-            AutoDismissLabel.Text = $"{remainingSec}s";
+            UpdateProgressLabel(remainingSec);
         }
+    }
+
+    private void TransitionToCompletedState()
+    {
+        _isCompleted = true;
+
+        if (_soundEnabled)
+        {
+            try
+            {
+                SystemSounds.Asterisk.Play();
+            }
+            catch
+            {
+                // Silently ignore audio playback errors
+            }
+        }
+
+        EmojiBlock.Text = "🎉";
+        CenterEmojiOpticalBounds("🎉");
+
+        TitleBlock.Text = _completedText ?? "Rest completed! Great job! 👀";
+        MessageBlock.Text = string.Empty;
+        MessageBlock.Visibility = Visibility.Collapsed;
+
+        SnoozeButton.Visibility = Visibility.Collapsed;
+        DismissButton.Content = "OK";
+        if (TryFindResource("ModernPrimaryButton") is Style primaryStyle)
+        {
+            DismissButton.Style = primaryStyle;
+        }
+
+        AutoDismissProgress.Value = _totalSeconds;
+        AutoDismissLabel.Text = "✓";
+
+        // 2-second grace period before auto-closing
+        _graceTimer = new DispatcherTimer
+        {
+            Interval = TimeSpan.FromSeconds(2)
+        };
+        _graceTimer.Tick += (s, args) =>
+        {
+            _graceTimer.Stop();
+            Complete();
+        };
+        _graceTimer.Start();
     }
 
     private void DismissButton_Click(object sender, RoutedEventArgs e)
     {
-        Dismiss();
+        if (_isGuidedMode && !_isCompleted)
+        {
+            Skip();
+        }
+        else
+        {
+            Complete();
+        }
     }
 
     private void SnoozeButton_Click(object sender, RoutedEventArgs e)
@@ -216,18 +310,41 @@ public partial class AlertOverlayWindow : Window
     {
         if (e.Key == Key.Escape)
         {
-            Dismiss();
+            if (_isGuidedMode && !_isCompleted)
+            {
+                Skip();
+            }
+            else
+            {
+                Complete();
+            }
+        }
+        else if (_isCompleted)
+        {
+            Complete();
         }
     }
 
-    public void Dismiss()
+    public void Complete()
     {
         if (_dismissed) return;
         _dismissed = true;
 
         _dismissTimer.Stop();
+        _graceTimer?.Stop();
         Close();
-        _onDismissed?.Invoke();
+        _onCompleted?.Invoke();
+    }
+
+    public void Skip()
+    {
+        if (_dismissed) return;
+        _dismissed = true;
+
+        _dismissTimer.Stop();
+        _graceTimer?.Stop();
+        Close();
+        _onSkipped?.Invoke();
     }
 
     public void Snooze()
@@ -236,7 +353,21 @@ public partial class AlertOverlayWindow : Window
         _dismissed = true;
 
         _dismissTimer.Stop();
+        _graceTimer?.Stop();
         Close();
         _onSnoozed?.Invoke();
+    }
+
+    public void Dismiss()
+    {
+        // General safe dismiss
+        if (_isGuidedMode && !_isCompleted)
+        {
+            Skip();
+        }
+        else
+        {
+            Complete();
+        }
     }
 }

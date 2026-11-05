@@ -21,6 +21,7 @@
         <Color x:Key="Color.Accent.Secondary.Hover">#c49eff</Color>
         <Color x:Key="Color.Accent.Secondary.Pressed">#7c4dff</Color>
         <Color x:Key="Color.Status.Danger">#f85149</Color>
+        <Color x:Key="Color.Status.Warning">#ffb74d</Color>
         <Color x:Key="Color.Text.Primary">#ffffff</Color>
         <Color x:Key="Color.Text.Secondary">#8b949e</Color>
         <Color x:Key="Color.Text.Inverse">#0b0e14</Color>
@@ -39,6 +40,7 @@
         <SolidColorBrush x:Key="Brush.Accent.Secondary.Hover" Color="{StaticResource Color.Accent.Secondary.Hover}" />
         <SolidColorBrush x:Key="Brush.Accent.Secondary.Pressed" Color="{StaticResource Color.Accent.Secondary.Pressed}" />
         <SolidColorBrush x:Key="Brush.Status.Danger" Color="{StaticResource Color.Status.Danger}" />
+        <SolidColorBrush x:Key="Brush.Status.Warning" Color="{StaticResource Color.Status.Warning}" />
         <SolidColorBrush x:Key="Brush.Text.Primary" Color="{StaticResource Color.Text.Primary}" />
         <SolidColorBrush x:Key="Brush.Text.Secondary" Color="{StaticResource Color.Text.Secondary}" />
         <SolidColorBrush x:Key="Brush.Text.Inverse" Color="{StaticResource Color.Text.Inverse}" />

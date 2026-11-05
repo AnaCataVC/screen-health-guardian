@@ -17,6 +17,7 @@ public partial class App : Application
 
     private ConfigService _configService = null!;
     private LocalizationService _locService = null!;
+    private StatsService _statsService = null!;
     private HealthTimerService _timerService = null!;
     private TaskbarIcon? _trayIcon;
     private MenuItem? _trayStatusMenuItem;
@@ -42,6 +43,8 @@ public partial class App : Application
         _configService = new ConfigService();
         _locService = new LocalizationService();
         _locService.SetLanguage(_configService.Current.Language);
+        _statsService = new StatsService();
+        _statsService.OnStatsUpdated += UpdateTrayStatusAndTooltip;
 
         _timerService = new HealthTimerService(_configService);
         _timerService.OnLookAwayTriggered += ShowLookAwayAlert;
@@ -212,7 +215,14 @@ public partial class App : Application
             ? _locService.Get("status_paused")
             : $"👀 {lookMin}m | ✨ {postMin}m";
 
-        _trayIcon.ToolTipText = $"Screen Health Guardian\n{status}";
+        var weekly = _statsService.GetWeeklySummary();
+        string weeklyStats = string.Format(
+            _locService.Get("tray_stats_summary"),
+            weekly.EyeRest.Respected,
+            weekly.EyeRest.ComplianceRate
+        );
+
+        _trayIcon.ToolTipText = $"Screen Health Guardian\n{status}\n{weeklyStats}";
     }
 
     private readonly List<AlertOverlayWindow> _activeOverlays = new();
@@ -245,12 +255,40 @@ public partial class App : Application
         int currentSessionId = Interlocked.Increment(ref _activeOverlaySessionId);
         int isDismissedFlag = 0;
 
-        void OnSessionDismissed()
+        void OnSessionCompleted()
         {
             if (Interlocked.Exchange(ref isDismissedFlag, 1) == 0)
             {
                 if (!isPreview)
                 {
+                    if (wasLookAway)
+                    {
+                        _statsService.RecordEyeRest(BreakOutcome.Respected);
+                    }
+                    else
+                    {
+                        _statsService.RecordPosture(BreakOutcome.Respected);
+                    }
+                    _timerService.AlertDismissed(wasLookAway);
+                }
+                DismissAllActiveOverlays();
+            }
+        }
+
+        void OnSessionSkipped()
+        {
+            if (Interlocked.Exchange(ref isDismissedFlag, 1) == 0)
+            {
+                if (!isPreview)
+                {
+                    if (wasLookAway)
+                    {
+                        _statsService.RecordEyeRest(BreakOutcome.Discarded);
+                    }
+                    else
+                    {
+                        _statsService.RecordPosture(BreakOutcome.Discarded);
+                    }
                     _timerService.AlertDismissed(wasLookAway);
                 }
                 DismissAllActiveOverlays();
@@ -263,6 +301,14 @@ public partial class App : Application
             {
                 if (!isPreview)
                 {
+                    if (wasLookAway)
+                    {
+                        _statsService.RecordEyeRest(BreakOutcome.Snoozed);
+                    }
+                    else
+                    {
+                        _statsService.RecordPosture(BreakOutcome.Snoozed);
+                    }
                     _timerService.AlertSnoozed(wasLookAway);
                 }
                 DismissAllActiveOverlays();
@@ -271,6 +317,7 @@ public partial class App : Application
 
         bool soundPlayed = false;
         string? snoozeText = isPreview ? null : _locService.Get("alert_snooze_btn");
+        bool isGuidedLookAway = wasLookAway && !isPreview;
 
         foreach (var display in displays)
         {
@@ -284,12 +331,16 @@ public partial class App : Application
                 emoji: emoji,
                 title: title,
                 message: message,
-                buttonText: buttonText,
+                buttonText: isGuidedLookAway ? _locService.Get("alert_skip_btn") : buttonText,
                 accentHex: accentHex,
                 targetDisplay: display,
                 autoDismissSec: autoDismissSec,
                 soundEnabled: shouldPlaySound,
-                onDismissed: OnSessionDismissed,
+                isGuidedLookAway: isGuidedLookAway,
+                restingTextFormat: _locService.Get("alert_look_away_resting"),
+                completedText: _locService.Get("alert_look_away_completed"),
+                onCompleted: OnSessionCompleted,
+                onSkipped: OnSessionSkipped,
                 snoozeButtonText: snoozeText,
                 onSnoozed: isPreview ? null : OnSessionSnoozed
             );
@@ -386,6 +437,7 @@ public partial class App : Application
         _settingsWindow = new SettingsWindow(
             _configService,
             _locService,
+            _statsService,
             onSaved: () =>
             {
                 RebuildTrayMenu();

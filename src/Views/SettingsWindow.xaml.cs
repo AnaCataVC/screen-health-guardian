@@ -10,13 +10,16 @@ public partial class SettingsWindow : Window
 {
     private readonly ConfigService _configService;
     private readonly LocalizationService _locService;
+    private readonly StatsService _statsService;
     private readonly Action? _onSaved;
     private readonly Action<AppConfig>? _onPreviewAlert;
     private bool _isLoaded = false;
+    private bool _showingWeekly = true;
 
     public SettingsWindow(
         ConfigService configService,
         LocalizationService locService,
+        StatsService statsService,
         Action? onSaved = null,
         Action<AppConfig>? onPreviewAlert = null)
     {
@@ -24,12 +27,27 @@ public partial class SettingsWindow : Window
 
         _configService = configService;
         _locService = locService;
+        _statsService = statsService;
         _onSaved = onSaved;
         _onPreviewAlert = onPreviewAlert;
 
+        _statsService.OnStatsUpdated += OnStatsServiceUpdated;
+
         LoadSettings();
         ApplyLocalization();
+        RefreshStatsView();
         _isLoaded = true;
+    }
+
+    private void OnStatsServiceUpdated()
+    {
+        Dispatcher.Invoke(RefreshStatsView);
+    }
+
+    protected override void OnClosed(EventArgs e)
+    {
+        _statsService.OnStatsUpdated -= OnStatsServiceUpdated;
+        base.OnClosed(e);
     }
 
     private void LoadSettings()
@@ -73,6 +91,15 @@ public partial class SettingsWindow : Window
         Title = _locService.Get("settings_window_title");
         HeaderTitle.Text = _locService.Get("settings_title");
         HeaderSubtitle.Text = _locService.Get("settings_subtitle");
+
+        SecHabitsLabel.Text = _locService.Get("settings_sec_habits");
+        BtnTabWeekly.Content = _locService.Get("settings_tab_weekly");
+        BtnTabLifetime.Content = _locService.Get("settings_tab_lifetime");
+        LblRespected.Text = _locService.Get("settings_habits_respected");
+        LblSnoozed.Text = _locService.Get("settings_habits_snoozed");
+        LblDiscarded.Text = _locService.Get("settings_habits_discarded");
+        BtnResetStats.Content = _locService.Get("settings_habits_reset");
+
         SecIntervalsLabel.Text = _locService.Get("settings_sec_intervals");
         EyeRestLabel.Text = _locService.Get("settings_eye_rest");
         PostureLabel.Text = _locService.Get("settings_posture");
@@ -96,6 +123,71 @@ public partial class SettingsWindow : Window
         BtnResetDefaults.Content = _locService.Get("settings_reset_defaults");
         BtnCancel.Content = _locService.Get("settings_cancel");
         BtnSave.Content = _locService.Get("settings_save");
+
+        RefreshStatsView();
+    }
+
+    private void RefreshStatsView()
+    {
+        var summary = _showingWeekly ? _statsService.GetWeeklySummary() : _statsService.GetLifetimeSummary();
+        var eye = summary.EyeRest;
+
+        TxtRespectedCount.Text = eye.Respected.ToString();
+        TxtSnoozedCount.Text = eye.Snoozed.ToString();
+        TxtDiscardedCount.Text = eye.Discarded.ToString();
+
+        double complianceRate = eye.ComplianceRate;
+        TxtCompliancePercentage.Text = string.Format(_locService.Get("settings_habits_compliance"), complianceRate);
+
+        // Update Proportional Stacked Ratio Bar
+        int total = eye.Total;
+        if (total > 0)
+        {
+            ColRespected.Width = new GridLength(eye.Respected > 0 ? eye.Respected : 0.001, GridUnitType.Star);
+            ColSnoozed.Width = new GridLength(eye.Snoozed > 0 ? eye.Snoozed : 0.001, GridUnitType.Star);
+            ColDiscarded.Width = new GridLength(eye.Discarded > 0 ? eye.Discarded : 0.001, GridUnitType.Star);
+        }
+        else
+        {
+            ColRespected.Width = new GridLength(1, GridUnitType.Star);
+            ColSnoozed.Width = new GridLength(0, GridUnitType.Star);
+            ColDiscarded.Width = new GridLength(0, GridUnitType.Star);
+        }
+
+        // Toggle button visual active states
+        if (TryFindResource("ModernPrimaryButton") is Style primaryStyle &&
+            TryFindResource("ModernDarkButton") is Style darkStyle)
+        {
+            BtnTabWeekly.Style = _showingWeekly ? primaryStyle : darkStyle;
+            BtnTabLifetime.Style = _showingWeekly ? darkStyle : primaryStyle;
+        }
+    }
+
+    private void BtnTabWeekly_Click(object sender, RoutedEventArgs e)
+    {
+        _showingWeekly = true;
+        RefreshStatsView();
+    }
+
+    private void BtnTabLifetime_Click(object sender, RoutedEventArgs e)
+    {
+        _showingWeekly = false;
+        RefreshStatsView();
+    }
+
+    private void BtnResetStats_Click(object sender, RoutedEventArgs e)
+    {
+        var result = MessageBox.Show(
+            _locService.Get("settings_habits_reset_confirm"),
+            _locService.Get("settings_habits_reset"),
+            MessageBoxButton.YesNo,
+            MessageBoxImage.Warning);
+
+        if (result == MessageBoxResult.Yes)
+        {
+            _statsService.ResetStats();
+            RefreshStatsView();
+        }
     }
 
     private void CmbLanguage_SelectionChanged(object sender, SelectionChangedEventArgs e)

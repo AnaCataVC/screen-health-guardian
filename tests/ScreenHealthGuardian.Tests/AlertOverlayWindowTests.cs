@@ -15,11 +15,7 @@ public class AlertOverlayWindowTests
         {
             try
             {
-                if (Application.Current == null)
-                {
-                    var app = new App();
-                    app.InitializeComponent();
-                }
+                WpfTestHelper.EnsureApplication();
 
                 var window = new AlertOverlayWindow(
                     emoji: "✨",
@@ -61,11 +57,7 @@ public class AlertOverlayWindowTests
         {
             try
             {
-                if (Application.Current == null)
-                {
-                    var app = new App();
-                    app.InitializeComponent();
-                }
+                WpfTestHelper.EnsureApplication();
 
                 var window = new AlertOverlayWindow(
                     emoji: "👀",
