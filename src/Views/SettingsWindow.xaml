@@ -3,15 +3,16 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="Screen Health Guardian — Preferences"
         Icon="pack://application:,,,/Assets/icon.ico"
-        Height="670" Width="510"
+        Height="535" Width="510"
         WindowStartupLocation="CenterScreen"
         ResizeMode="NoResize"
         Background="{StaticResource Brush.Surface.Canvas}"
         Foreground="{StaticResource Brush.Text.Primary}"
         FontFamily="Segoe UI">
 
-    <Grid Margin="25,18,25,18">
+    <Grid Margin="24,14,24,14">
         <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
             <RowDefinition Height="Auto" />
@@ -19,315 +20,355 @@
         </Grid.RowDefinitions>
 
         <!-- Header -->
-        <StackPanel Grid.Row="0" Margin="0,0,0,14">
-            <TextBlock x:Name="HeaderTitle"
-                       Text="Preferences &amp; Settings"
-                       FontSize="18"
-                       FontWeight="Bold"
-                       Foreground="{StaticResource Brush.Text.Primary}" />
-            <TextBlock x:Name="HeaderSubtitle"
-                       Text="Customize interval timers, alerts, and system behaviors"
-                       FontSize="11"
-                       Foreground="{StaticResource Brush.Text.Secondary}"
-                       Margin="0,3,0,0" />
-        </StackPanel>
+        <Grid Grid.Row="0" Margin="0,0,0,10">
+            <StackPanel VerticalAlignment="Center">
+                <TextBlock x:Name="HeaderTitle"
+                           Text="Preferences &amp; Settings"
+                           FontSize="18"
+                           FontWeight="Bold"
+                           Foreground="{StaticResource Brush.Text.Primary}" />
+                <TextBlock x:Name="HeaderSubtitle"
+                           Text="Customize interval timers, alerts, and system behaviors"
+                           FontSize="11"
+                           Foreground="{StaticResource Brush.Text.Secondary}"
+                           Margin="0,2,0,0" />
+            </StackPanel>
+        </Grid>
 
-        <!-- Main Settings Cards -->
-        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
-            <StackPanel Margin="0,0,4,0">
-                <!-- Card 1: Habits & Compliance Stats -->
-                <Border Background="{StaticResource Brush.Surface.Card}"
-                        BorderBrush="{StaticResource Brush.Border.Subtle}"
-                        BorderThickness="1"
-                        CornerRadius="10"
-                        Padding="18,14"
-                        Margin="0,0,0,12">
-                    <StackPanel>
-                        <!-- Header with Title and Period Toggle -->
-                        <Grid Margin="0,0,0,10">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="Auto" />
-                            </Grid.ColumnDefinitions>
-                            <TextBlock x:Name="SecHabitsLabel"
-                                       Text="HABITS &amp; COMPLIANCE"
+        <!-- Segmented Tab Navigation -->
+        <Border Grid.Row="1"
+                Background="{StaticResource Brush.Surface.Control}"
+                BorderBrush="{StaticResource Brush.Border.Subtle}"
+                BorderThickness="1"
+                CornerRadius="8"
+                Padding="3"
+                HorizontalAlignment="Center"
+                Margin="0,0,0,12">
+            <StackPanel Orientation="Horizontal">
+                <Button x:Name="NavBtnGeneral"
+                        Content="⏱ General"
+                        Click="NavBtnGeneral_Click"
+                        Style="{StaticResource ModernSegmentedButtonActive}"
+                        Padding="16,5"
+                        FontSize="11" />
+                <Button x:Name="NavBtnHabits"
+                        Content="📊 Habits &amp; Stats"
+                        Click="NavBtnHabits_Click"
+                        Style="{StaticResource ModernSegmentedButton}"
+                        Padding="16,5"
+                        FontSize="11"
+                        Margin="4,0,0,0" />
+            </StackPanel>
+        </Border>
+
+        <!-- Main Content Area with ScrollViewer -->
+        <ScrollViewer Grid.Row="2" VerticalScrollBarVisibility="Auto">
+            <Grid Margin="0,0,4,0">
+                <!-- Panel 1: General Settings (Timers & Preferences) -->
+                <StackPanel x:Name="PanelGeneral" Visibility="Visible">
+                    <!-- Card 1: Intervals -->
+                    <Border Background="{StaticResource Brush.Surface.Card}"
+                            BorderBrush="{StaticResource Brush.Border.Subtle}"
+                            BorderThickness="1"
+                            CornerRadius="10"
+                            Padding="16,12"
+                            Margin="0,0,0,10">
+                        <StackPanel>
+                            <TextBlock x:Name="SecIntervalsLabel"
+                                       Text="TIMER INTERVALS"
                                        FontSize="11"
                                        FontWeight="Bold"
                                        Foreground="{StaticResource Brush.Accent.Primary}"
-                                       VerticalAlignment="Center" />
-                            <!-- Period Selector Tabs/Pill -->
-                            <StackPanel Grid.Column="1" Orientation="Horizontal">
-                                <Button x:Name="BtnTabWeekly"
-                                        Content="This Week"
-                                        Click="BtnTabWeekly_Click"
-                                        Style="{StaticResource ModernPrimaryButton}"
-                                        Padding="10,3"
-                                        FontSize="11"
-                                        Margin="0,0,4,0" />
-                                <Button x:Name="BtnTabLifetime"
-                                        Content="Lifetime"
-                                        Click="BtnTabLifetime_Click"
-                                        Style="{StaticResource ModernDarkButton}"
-                                        Padding="10,3"
-                                        FontSize="11" />
-                            </StackPanel>
-                        </Grid>
+                                       Margin="0,0,0,8" />
 
-                        <!-- Compliance Percentage Badge & Subtitle -->
-                        <Grid Margin="0,0,0,8">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="Auto" />
-                            </Grid.ColumnDefinitions>
-                            <StackPanel VerticalAlignment="Center">
-                                <TextBlock x:Name="TxtCompliancePercentage"
-                                           Text="100% Compliance"
-                                           FontSize="15"
-                                           FontWeight="Bold"
-                                           Foreground="{StaticResource Brush.Text.Primary}" />
-                                <TextBlock x:Name="TxtComplianceSubtitle"
-                                           Text="Eye Rest (20-20-20 rule)"
-                                           FontSize="11"
-                                           Foreground="{StaticResource Brush.Text.Secondary}" />
-                            </StackPanel>
-                            <Button x:Name="BtnResetStats"
-                                    Grid.Column="1"
-                                    Content="Reset Statistics"
-                                    Click="BtnResetStats_Click"
-                                    Style="{StaticResource ModernDarkButton}"
-                                    Padding="8,3"
-                                    FontSize="10"
-                                    VerticalAlignment="Center" />
-                        </Grid>
-
-                        <!-- Stacked Proportional Ratio Bar -->
-                        <Border Height="6"
-                                CornerRadius="3"
-                                Background="{StaticResource Brush.Surface.Control}"
-                                ClipToBounds="True"
-                                Margin="0,4,0,10">
-                            <Grid x:Name="RatioBarGrid">
+                            <!-- Eye Rest -->
+                            <Grid Margin="0,4">
                                 <Grid.ColumnDefinitions>
-                                    <ColumnDefinition x:Name="ColRespected" Width="*" />
-                                    <ColumnDefinition x:Name="ColSnoozed" Width="Auto" />
-                                    <ColumnDefinition x:Name="ColDiscarded" Width="Auto" />
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="38" />
                                 </Grid.ColumnDefinitions>
-                                <Border Grid.Column="0" Background="{StaticResource Brush.Accent.Primary}" />
-                                <Border Grid.Column="1" Background="{StaticResource Brush.Status.Warning}" />
-                                <Border Grid.Column="2" Background="{StaticResource Brush.Status.Danger}" />
+                                <TextBlock x:Name="EyeRestLabel" Text="Eye Rest Interval:" VerticalAlignment="Center" Foreground="{StaticResource Brush.Text.Primary}" FontSize="12" />
+                                <TextBox x:Name="TxtLookAway" Grid.Column="1" Width="55" Height="26" MaxLength="3" Style="{StaticResource DarkNumericTextBoxStyle}" />
+                                <TextBlock x:Name="TxtLookAwayUnit" Grid.Column="2" Text="min" VerticalAlignment="Center" Margin="8,0,0,0" Foreground="{StaticResource Brush.Text.Secondary}" FontSize="11" />
                             </Grid>
-                        </Border>
 
-                        <!-- 3 Metric Badges Grid -->
-                        <Grid Margin="0,4,0,0">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="*" />
-                            </Grid.ColumnDefinitions>
+                            <!-- Posture -->
+                            <Grid Margin="0,4">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="38" />
+                                </Grid.ColumnDefinitions>
+                                <TextBlock x:Name="PostureLabel" Text="Posture Check Interval:" VerticalAlignment="Center" Foreground="{StaticResource Brush.Text.Primary}" FontSize="12" />
+                                <TextBox x:Name="TxtPosture" Grid.Column="1" Width="55" Height="26" MaxLength="3" Style="{StaticResource DarkNumericTextBoxStyle}" />
+                                <TextBlock x:Name="TxtPostureUnit" Grid.Column="2" Text="min" VerticalAlignment="Center" Margin="8,0,0,0" Foreground="{StaticResource Brush.Text.Secondary}" FontSize="11" />
+                            </Grid>
 
-                            <!-- Respected Badge -->
-                            <Border Grid.Column="0"
-                                    Background="{StaticResource Brush.Surface.Control}"
-                                    CornerRadius="6"
-                                    Padding="8,6"
-                                    Margin="0,0,4,0">
-                                <StackPanel HorizontalAlignment="Center">
-                                    <TextBlock x:Name="TxtRespectedCount"
-                                               Text="0"
-                                               FontSize="14"
+                            <!-- Idle -->
+                            <Grid Margin="0,4">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="38" />
+                                </Grid.ColumnDefinitions>
+                                <TextBlock x:Name="IdleLabel" Text="Idle Inactivity Reset:" VerticalAlignment="Center" Foreground="{StaticResource Brush.Text.Primary}" FontSize="12" />
+                                <TextBox x:Name="TxtIdle" Grid.Column="1" Width="55" Height="26" MaxLength="2" Style="{StaticResource DarkNumericTextBoxStyle}" />
+                                <TextBlock x:Name="TxtIdleUnit" Grid.Column="2" Text="min" VerticalAlignment="Center" Margin="8,0,0,0" Foreground="{StaticResource Brush.Text.Secondary}" FontSize="11" />
+                            </Grid>
+
+                            <!-- Dismiss -->
+                            <Grid Margin="0,4">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="38" />
+                                </Grid.ColumnDefinitions>
+                                <TextBlock x:Name="DismissLabel" Text="Auto-dismiss Timeout:" VerticalAlignment="Center" Foreground="{StaticResource Brush.Text.Primary}" FontSize="12" />
+                                <TextBox x:Name="TxtDismiss" Grid.Column="1" Width="55" Height="26" MaxLength="4" Style="{StaticResource DarkNumericTextBoxStyle}" />
+                                <TextBlock x:Name="TxtDismissUnit" Grid.Column="2" Text="sec" VerticalAlignment="Center" Margin="8,0,0,0" Foreground="{StaticResource Brush.Text.Secondary}" FontSize="11" />
+                            </Grid>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Card 2: System Preferences -->
+                    <Border Background="{StaticResource Brush.Surface.Card}"
+                            BorderBrush="{StaticResource Brush.Border.Subtle}"
+                            BorderThickness="1"
+                            CornerRadius="10"
+                            Padding="16,12"
+                            Margin="0,0,0,4">
+                        <StackPanel>
+                            <TextBlock x:Name="SecPreferencesLabel"
+                                       Text="SYSTEM &amp; PREFERENCES"
+                                       FontSize="11"
+                                       FontWeight="Bold"
+                                       Foreground="{StaticResource Brush.Accent.Secondary}"
+                                       Margin="0,0,0,8" />
+
+                            <CheckBox x:Name="ChkSound"
+                                      Content="Play notification sound"
+                                      Style="{StaticResource DarkCheckBoxStyle}"
+                                      Margin="0,4" />
+
+                            <CheckBox x:Name="ChkAutoStart"
+                                      Content="Start on Windows login"
+                                      Style="{StaticResource DarkCheckBoxStyle}"
+                                      Margin="0,4" />
+
+                            <!-- Language Dropdown -->
+                            <Grid Margin="0,4">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="170" />
+                                </Grid.ColumnDefinitions>
+                                <TextBlock x:Name="LanguageLabel" Text="Language:" VerticalAlignment="Center" Foreground="{StaticResource Brush.Text.Primary}" FontSize="12" />
+                                <ComboBox x:Name="CmbLanguage"
+                                          Grid.Column="1"
+                                          Height="26"
+                                          Style="{StaticResource DarkComboBoxStyle}"
+                                          SelectionChanged="CmbLanguage_SelectionChanged">
+                                    <ComboBoxItem Content="English" Tag="en" />
+                                    <ComboBoxItem Content="Español" Tag="es" />
+                                </ComboBox>
+                            </Grid>
+
+                            <!-- Display Mode Dropdown -->
+                            <Grid Margin="0,4">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="170" />
+                                </Grid.ColumnDefinitions>
+                                <TextBlock x:Name="DisplayModeLabel" Text="Alert Display:" VerticalAlignment="Center" Foreground="{StaticResource Brush.Text.Primary}" FontSize="12" />
+                                <ComboBox x:Name="CmbDisplayMode"
+                                          Grid.Column="1"
+                                          Height="26"
+                                          Style="{StaticResource DarkComboBoxStyle}">
+                                    <ComboBoxItem x:Name="CmbItemDisplayAll" Content="All Monitors" Tag="all" />
+                                    <ComboBoxItem x:Name="CmbItemDisplayActive" Content="Active Screen (Cursor)" Tag="active" />
+                                </ComboBox>
+                            </Grid>
+                        </StackPanel>
+                    </Border>
+                </StackPanel>
+
+                <!-- Panel 2: Habits & Compliance Stats -->
+                <StackPanel x:Name="PanelHabits" Visibility="Collapsed">
+                    <Border Background="{StaticResource Brush.Surface.Card}"
+                            BorderBrush="{StaticResource Brush.Border.Subtle}"
+                            BorderThickness="1"
+                            CornerRadius="10"
+                            Padding="18,16"
+                            Margin="0,0,0,4">
+                        <StackPanel>
+                            <!-- Period Selector & Title -->
+                            <Grid Margin="0,0,0,14">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <TextBlock x:Name="SecHabitsLabel"
+                                           Text="HABITS &amp; COMPLIANCE"
+                                           FontSize="11"
+                                           FontWeight="Bold"
+                                           Foreground="{StaticResource Brush.Accent.Primary}"
+                                           VerticalAlignment="Center" />
+                                <Border Grid.Column="1"
+                                        Background="{StaticResource Brush.Surface.Control}"
+                                        BorderBrush="{StaticResource Brush.Border.Subtle}"
+                                        BorderThickness="1"
+                                        CornerRadius="6"
+                                        Padding="2">
+                                    <StackPanel Orientation="Horizontal">
+                                        <Button x:Name="BtnTabWeekly"
+                                                Content="This Week"
+                                                Click="BtnTabWeekly_Click"
+                                                Style="{StaticResource ModernSegmentedButtonActive}"
+                                                Padding="12,3"
+                                                FontSize="11" />
+                                        <Button x:Name="BtnTabLifetime"
+                                                Content="Lifetime"
+                                                Click="BtnTabLifetime_Click"
+                                                Style="{StaticResource ModernSegmentedButton}"
+                                                Padding="12,3"
+                                                FontSize="11" />
+                                    </StackPanel>
+                                </Border>
+                            </Grid>
+
+                            <!-- Compliance Percentage Badge & Subtitle -->
+                            <Grid Margin="0,0,0,12">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <StackPanel VerticalAlignment="Center">
+                                    <TextBlock x:Name="TxtCompliancePercentage"
+                                               Text="100% Compliance"
+                                               FontSize="18"
                                                FontWeight="Bold"
-                                               Foreground="{StaticResource Brush.Accent.Primary}"
-                                               HorizontalAlignment="Center" />
-                                    <TextBlock x:Name="LblRespected"
-                                               Text="Respected (20s)"
-                                               FontSize="10"
+                                               Foreground="{StaticResource Brush.Text.Primary}" />
+                                    <TextBlock x:Name="TxtComplianceSubtitle"
+                                               Text="Eye Rest (20-20-20 rule)"
+                                               FontSize="11"
                                                Foreground="{StaticResource Brush.Text.Secondary}"
-                                               HorizontalAlignment="Center"
-                                               TextTrimming="CharacterEllipsis" />
+                                               Margin="0,2,0,0" />
                                 </StackPanel>
+                                <Button x:Name="BtnResetStats"
+                                        Grid.Column="1"
+                                        Content="Reset Statistics"
+                                        Click="BtnResetStats_Click"
+                                        Style="{StaticResource ModernDarkButton}"
+                                        Padding="10,4"
+                                        FontSize="11"
+                                        VerticalAlignment="Center" />
+                            </Grid>
+
+                            <!-- Stacked Proportional Ratio Bar -->
+                            <Border Height="8"
+                                    CornerRadius="4"
+                                    Background="{StaticResource Brush.Surface.Control}"
+                                    ClipToBounds="True"
+                                    Margin="0,0,0,14">
+                                <Grid x:Name="RatioBarGrid">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition x:Name="ColRespected" Width="*" />
+                                        <ColumnDefinition x:Name="ColSnoozed" Width="Auto" />
+                                        <ColumnDefinition x:Name="ColDiscarded" Width="Auto" />
+                                    </Grid.ColumnDefinitions>
+                                    <Border Grid.Column="0" Background="{StaticResource Brush.Accent.Primary}" />
+                                    <Border Grid.Column="1" Background="{StaticResource Brush.Status.Warning}" />
+                                    <Border Grid.Column="2" Background="{StaticResource Brush.Status.Danger}" />
+                                </Grid>
                             </Border>
 
-                            <!-- Snoozed Badge -->
-                            <Border Grid.Column="1"
-                                    Background="{StaticResource Brush.Surface.Control}"
-                                    CornerRadius="6"
-                                    Padding="8,6"
-                                    Margin="2,0,2,0">
-                                <StackPanel HorizontalAlignment="Center">
-                                    <TextBlock x:Name="TxtSnoozedCount"
-                                               Text="0"
-                                               FontSize="14"
-                                               FontWeight="Bold"
-                                               Foreground="{StaticResource Brush.Status.Warning}"
-                                               HorizontalAlignment="Center" />
-                                    <TextBlock x:Name="LblSnoozed"
-                                               Text="Snoozed"
-                                               FontSize="10"
-                                               Foreground="{StaticResource Brush.Text.Secondary}"
-                                               HorizontalAlignment="Center"
-                                               TextTrimming="CharacterEllipsis" />
-                                </StackPanel>
-                            </Border>
+                            <!-- 3 Metric Badges Grid -->
+                            <Grid Margin="0,0,0,6">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
 
-                            <!-- Discarded Badge -->
-                            <Border Grid.Column="2"
-                                    Background="{StaticResource Brush.Surface.Control}"
-                                    CornerRadius="6"
-                                    Padding="8,6"
-                                    Margin="4,0,0,0">
-                                <StackPanel HorizontalAlignment="Center">
-                                    <TextBlock x:Name="TxtDiscardedCount"
-                                               Text="0"
-                                               FontSize="14"
-                                               FontWeight="Bold"
-                                               Foreground="{StaticResource Brush.Status.Danger}"
-                                               HorizontalAlignment="Center" />
-                                    <TextBlock x:Name="LblDiscarded"
-                                               Text="Skipped"
-                                               FontSize="10"
-                                               Foreground="{StaticResource Brush.Text.Secondary}"
-                                               HorizontalAlignment="Center"
-                                               TextTrimming="CharacterEllipsis" />
-                                </StackPanel>
-                            </Border>
-                        </Grid>
-                    </StackPanel>
-                </Border>
+                                <!-- Respected Badge -->
+                                <Border Grid.Column="0"
+                                        Background="{StaticResource Brush.Surface.Control}"
+                                        CornerRadius="6"
+                                        Padding="10,8"
+                                        Margin="0,0,4,0">
+                                    <StackPanel HorizontalAlignment="Center">
+                                        <TextBlock x:Name="TxtRespectedCount"
+                                                   Text="0"
+                                                   FontSize="16"
+                                                   FontWeight="Bold"
+                                                   Foreground="{StaticResource Brush.Accent.Primary}"
+                                                   HorizontalAlignment="Center" />
+                                        <TextBlock x:Name="LblRespected"
+                                                   Text="Respected (20s)"
+                                                   FontSize="10"
+                                                   Foreground="{StaticResource Brush.Text.Secondary}"
+                                                   HorizontalAlignment="Center"
+                                                   Margin="0,2,0,0"
+                                                   TextTrimming="CharacterEllipsis" />
+                                    </StackPanel>
+                                </Border>
 
-                <!-- Card 2: Intervals -->
-                <Border Background="{StaticResource Brush.Surface.Card}"
-                        BorderBrush="{StaticResource Brush.Border.Subtle}"
-                        BorderThickness="1"
-                        CornerRadius="10"
-                        Padding="18,14"
-                        Margin="0,0,0,12">
-                    <StackPanel>
-                        <TextBlock x:Name="SecIntervalsLabel"
-                                   Text="TIMER INTERVALS"
-                                   FontSize="11"
-                                   FontWeight="Bold"
-                                   Foreground="{StaticResource Brush.Accent.Primary}"
-                                   Margin="0,0,0,10" />
+                                <!-- Snoozed Badge -->
+                                <Border Grid.Column="1"
+                                        Background="{StaticResource Brush.Surface.Control}"
+                                        CornerRadius="6"
+                                        Padding="10,8"
+                                        Margin="2,0,2,0">
+                                    <StackPanel HorizontalAlignment="Center">
+                                        <TextBlock x:Name="TxtSnoozedCount"
+                                                   Text="0"
+                                                   FontSize="16"
+                                                   FontWeight="Bold"
+                                                   Foreground="{StaticResource Brush.Status.Warning}"
+                                                   HorizontalAlignment="Center" />
+                                        <TextBlock x:Name="LblSnoozed"
+                                                   Text="Snoozed"
+                                                   FontSize="10"
+                                                   Foreground="{StaticResource Brush.Text.Secondary}"
+                                                   HorizontalAlignment="Center"
+                                                   Margin="0,2,0,0"
+                                                   TextTrimming="CharacterEllipsis" />
+                                    </StackPanel>
+                                </Border>
 
-                        <!-- Eye Rest -->
-                        <Grid Margin="0,5">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="Auto" />
-                                <ColumnDefinition Width="38" />
-                            </Grid.ColumnDefinitions>
-                            <TextBlock x:Name="EyeRestLabel" Text="Eye Rest Interval:" VerticalAlignment="Center" Foreground="{StaticResource Brush.Text.Primary}" FontSize="12" />
-                            <TextBox x:Name="TxtLookAway" Grid.Column="1" Width="55" Height="28" MaxLength="3" Style="{StaticResource DarkNumericTextBoxStyle}" />
-                            <TextBlock x:Name="TxtLookAwayUnit" Grid.Column="2" Text="min" VerticalAlignment="Center" Margin="8,0,0,0" Foreground="{StaticResource Brush.Text.Secondary}" FontSize="11" />
-                        </Grid>
-
-                        <!-- Posture -->
-                        <Grid Margin="0,5">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="Auto" />
-                                <ColumnDefinition Width="38" />
-                            </Grid.ColumnDefinitions>
-                            <TextBlock x:Name="PostureLabel" Text="Posture Check Interval:" VerticalAlignment="Center" Foreground="{StaticResource Brush.Text.Primary}" FontSize="12" />
-                            <TextBox x:Name="TxtPosture" Grid.Column="1" Width="55" Height="28" MaxLength="3" Style="{StaticResource DarkNumericTextBoxStyle}" />
-                            <TextBlock x:Name="TxtPostureUnit" Grid.Column="2" Text="min" VerticalAlignment="Center" Margin="8,0,0,0" Foreground="{StaticResource Brush.Text.Secondary}" FontSize="11" />
-                        </Grid>
-
-                        <!-- Idle -->
-                        <Grid Margin="0,5">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="Auto" />
-                                <ColumnDefinition Width="38" />
-                            </Grid.ColumnDefinitions>
-                            <TextBlock x:Name="IdleLabel" Text="Idle Inactivity Reset:" VerticalAlignment="Center" Foreground="{StaticResource Brush.Text.Primary}" FontSize="12" />
-                            <TextBox x:Name="TxtIdle" Grid.Column="1" Width="55" Height="28" MaxLength="2" Style="{StaticResource DarkNumericTextBoxStyle}" />
-                            <TextBlock x:Name="TxtIdleUnit" Grid.Column="2" Text="min" VerticalAlignment="Center" Margin="8,0,0,0" Foreground="{StaticResource Brush.Text.Secondary}" FontSize="11" />
-                        </Grid>
-
-                        <!-- Dismiss -->
-                        <Grid Margin="0,5">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="Auto" />
-                                <ColumnDefinition Width="38" />
-                            </Grid.ColumnDefinitions>
-                            <TextBlock x:Name="DismissLabel" Text="Auto-dismiss Timeout:" VerticalAlignment="Center" Foreground="{StaticResource Brush.Text.Primary}" FontSize="12" />
-                            <TextBox x:Name="TxtDismiss" Grid.Column="1" Width="55" Height="28" MaxLength="4" Style="{StaticResource DarkNumericTextBoxStyle}" />
-                            <TextBlock x:Name="TxtDismissUnit" Grid.Column="2" Text="sec" VerticalAlignment="Center" Margin="8,0,0,0" Foreground="{StaticResource Brush.Text.Secondary}" FontSize="11" />
-                        </Grid>
-                    </StackPanel>
-                </Border>
-
-                <!-- Card 3: System Preferences -->
-                <Border Background="{StaticResource Brush.Surface.Card}"
-                        BorderBrush="{StaticResource Brush.Border.Subtle}"
-                        BorderThickness="1"
-                        CornerRadius="10"
-                        Padding="18,14"
-                        Margin="0,0,0,8">
-                    <StackPanel>
-                        <TextBlock x:Name="SecPreferencesLabel"
-                                   Text="SYSTEM &amp; PREFERENCES"
-                                   FontSize="11"
-                                   FontWeight="Bold"
-                                   Foreground="{StaticResource Brush.Accent.Secondary}"
-                                   Margin="0,0,0,10" />
-
-                        <!-- Sound Checkbox -->
-                        <CheckBox x:Name="ChkSound"
-                                  Content="Play notification sound"
-                                  Style="{StaticResource DarkCheckBoxStyle}"
-                                  Margin="0,6" />
-
-                        <!-- Autostart Checkbox -->
-                        <CheckBox x:Name="ChkAutoStart"
-                                  Content="Start on Windows login"
-                                  Style="{StaticResource DarkCheckBoxStyle}"
-                                  Margin="0,6" />
-
-                        <!-- Language Dropdown -->
-                        <Grid Margin="0,6">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="170" />
-                            </Grid.ColumnDefinitions>
-                            <TextBlock x:Name="LanguageLabel" Text="Language:" VerticalAlignment="Center" Foreground="{StaticResource Brush.Text.Primary}" FontSize="12" />
-                            <ComboBox x:Name="CmbLanguage"
-                                      Grid.Column="1"
-                                      Height="28"
-                                      Style="{StaticResource DarkComboBoxStyle}"
-                                      SelectionChanged="CmbLanguage_SelectionChanged">
-                                <ComboBoxItem Content="English" Tag="en" />
-                                <ComboBoxItem Content="Español" Tag="es" />
-                            </ComboBox>
-                        </Grid>
-
-                        <!-- Display Mode Dropdown -->
-                        <Grid Margin="0,6">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="170" />
-                            </Grid.ColumnDefinitions>
-                            <TextBlock x:Name="DisplayModeLabel" Text="Alert Display:" VerticalAlignment="Center" Foreground="{StaticResource Brush.Text.Primary}" FontSize="12" />
-                            <ComboBox x:Name="CmbDisplayMode"
-                                      Grid.Column="1"
-                                      Height="28"
-                                      Style="{StaticResource DarkComboBoxStyle}">
-                                <ComboBoxItem x:Name="CmbItemDisplayAll" Content="All Monitors" Tag="all" />
-                                <ComboBoxItem x:Name="CmbItemDisplayActive" Content="Active Screen (Cursor)" Tag="active" />
-                            </ComboBox>
-                        </Grid>
-                    </StackPanel>
-                </Border>
-            </StackPanel>
+                                <!-- Discarded Badge -->
+                                <Border Grid.Column="2"
+                                        Background="{StaticResource Brush.Surface.Control}"
+                                        CornerRadius="6"
+                                        Padding="10,8"
+                                        Margin="4,0,0,0">
+                                    <StackPanel HorizontalAlignment="Center">
+                                        <TextBlock x:Name="TxtDiscardedCount"
+                                                   Text="0"
+                                                   FontSize="16"
+                                                   FontWeight="Bold"
+                                                   Foreground="{StaticResource Brush.Status.Danger}"
+                                                   HorizontalAlignment="Center" />
+                                        <TextBlock x:Name="LblDiscarded"
+                                                   Text="Skipped"
+                                                   FontSize="10"
+                                                   Foreground="{StaticResource Brush.Text.Secondary}"
+                                                   HorizontalAlignment="Center"
+                                                   Margin="0,2,0,0"
+                                                   TextTrimming="CharacterEllipsis" />
+                                    </StackPanel>
+                                </Border>
+                            </Grid>
+                        </StackPanel>
+                    </Border>
+                </StackPanel>
+            </Grid>
         </ScrollViewer>
 
         <!-- Inline Validation Error Banner -->
         <TextBlock x:Name="TxtValidationError"
-                   Grid.Row="2"
-                   Margin="0,6,0,6"
+                   Grid.Row="3"
+                   Margin="0,4,0,4"
                    FontSize="11"
                    Foreground="{StaticResource Brush.Status.Danger}"
                    TextWrapping="Wrap"
@@ -336,7 +377,7 @@
                    Visibility="Collapsed" />
 
         <!-- Footer Buttons -->
-        <Grid Grid.Row="3" Margin="0,10,0,0">
+        <Grid Grid.Row="4" Margin="0,8,0,0">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="Auto" />
@@ -345,7 +386,7 @@
 
             <!-- Quick Action Buttons & Version -->
             <StackPanel Grid.Column="0" VerticalAlignment="Center">
-                <TextBlock Text="Screen Health Guardian v2.3.0"
+                <TextBlock Text="Screen Health Guardian v2.3.1"
                            FontSize="10"
                            Foreground="{StaticResource Brush.Text.Secondary}"
                            Margin="0,0,0,4" />

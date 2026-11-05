@@ -92,6 +92,9 @@ public partial class SettingsWindow : Window
         HeaderTitle.Text = _locService.Get("settings_title");
         HeaderSubtitle.Text = _locService.Get("settings_subtitle");
 
+        NavBtnGeneral.Content = _locService.Get("settings_nav_general");
+        NavBtnHabits.Content = _locService.Get("settings_nav_habits");
+
         SecHabitsLabel.Text = _locService.Get("settings_sec_habits");
         BtnTabWeekly.Content = _locService.Get("settings_tab_weekly");
         BtnTabLifetime.Content = _locService.Get("settings_tab_lifetime");
@@ -155,11 +158,34 @@ public partial class SettingsWindow : Window
         }
 
         // Toggle button visual active states
-        if (TryFindResource("ModernPrimaryButton") is Style primaryStyle &&
-            TryFindResource("ModernDarkButton") is Style darkStyle)
+        if (TryFindResource("ModernSegmentedButtonActive") is Style activeStyle &&
+            TryFindResource("ModernSegmentedButton") is Style inactiveStyle)
         {
-            BtnTabWeekly.Style = _showingWeekly ? primaryStyle : darkStyle;
-            BtnTabLifetime.Style = _showingWeekly ? darkStyle : primaryStyle;
+            BtnTabWeekly.Style = _showingWeekly ? activeStyle : inactiveStyle;
+            BtnTabLifetime.Style = _showingWeekly ? inactiveStyle : activeStyle;
+        }
+    }
+
+    private void NavBtnGeneral_Click(object sender, RoutedEventArgs e)
+    {
+        ShowTab(isGeneral: true);
+    }
+
+    private void NavBtnHabits_Click(object sender, RoutedEventArgs e)
+    {
+        ShowTab(isGeneral: false);
+    }
+
+    private void ShowTab(bool isGeneral)
+    {
+        PanelGeneral.Visibility = isGeneral ? Visibility.Visible : Visibility.Collapsed;
+        PanelHabits.Visibility = isGeneral ? Visibility.Collapsed : Visibility.Visible;
+
+        if (TryFindResource("ModernSegmentedButtonActive") is Style activeStyle &&
+            TryFindResource("ModernSegmentedButton") is Style inactiveStyle)
+        {
+            NavBtnGeneral.Style = isGeneral ? activeStyle : inactiveStyle;
+            NavBtnHabits.Style = isGeneral ? inactiveStyle : activeStyle;
         }
     }
 
