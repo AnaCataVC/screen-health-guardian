@@ -1,0 +1,35 @@
+name: CI Quality Gate
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    name: Build & Test (.NET 9)
+    runs-on: windows-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup .NET 9 SDK
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '9.0.x'
+
+      - name: Restore dependencies
+        run: dotnet restore src/ScreenHealthGuardian.csproj
+
+      - name: Run Automated Tests
+        run: dotnet test tests/ScreenHealthGuardian.Tests/ScreenHealthGuardian.Tests.csproj -c Release
+
+      - name: Verify Release Compilation
+        run: dotnet build src/ScreenHealthGuardian.csproj -c Release
