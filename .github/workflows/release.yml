@@ -49,7 +49,7 @@ jobs:
             exit 1
           }
           $tagVersion = "${{ github.ref_name }}".TrimStart('v')
-          & $isccPath /DAppVersion=$tagVersion installer.iss
+          & $isccPath /DMyAppVersion=$tagVersion installer.iss
 
       - name: Package Deliverables & Checksum
         shell: pwsh

@@ -1,10 +1,14 @@
 ; Inno Setup Script for Screen Health Guardian
 ; Generates a professional Windows installer.
 
+#ifndef MyAppVersion
+#define MyAppVersion "2.3.1"
+#endif
+
 [Setup]
 ; App Information
 AppName=Screen Health Guardian
-AppVersion=2.3.1
+AppVersion={#MyAppVersion}
 AppPublisher=AnaCataVC
 AppCopyright=Copyright (C) 2026
 AppSupportURL=https://github.com/AnaCataVC/screen-health-guardian
