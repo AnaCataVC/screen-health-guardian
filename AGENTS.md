@@ -92,15 +92,15 @@ dotnet run --project src/ScreenHealthGuardian.csproj
 
 > [!IMPORTANT]
 > **Single Official Deliverable for GitHub Releases:**
-> Every release published on GitHub **MUST ALWAYS** publish the official Inno Setup installer executable along with its cryptographic SHA-256 hash:
+> Every release published on GitHub **MUST ALWAYS** publish **ONLY** the official Inno Setup installer executable:
 > ```text
 > ScreenHealthGuardian-Setup.exe
-> ScreenHealthGuardian-Setup.exe.sha256
 > ```
-> - **Automated Release via CI/CD**: Pushing a tag (`git tag vX.Y.Z && git push origin vX.Y.Z`) triggers `.github/workflows/release.yml` on `windows-latest`. The workflow runs automated tests, executes `dotnet publish win-x64`, compiles Inno Setup with `/DMyAppVersion=X.Y.Z`, computes the `.sha256` checksum, and creates the GitHub Release with release notes.
+> *(GitHub natively calculates and displays the SHA-256 digest on the web UI).*
+> - **Automated Release via CI/CD**: Pushing a tag (`git tag vX.Y.Z && git push origin vX.Y.Z`) triggers `.github/workflows/release.yml` on `windows-latest`. The workflow runs automated tests, executes `dotnet publish win-x64`, compiles Inno Setup with `/DMyAppVersion=X.Y.Z`, and creates the GitHub Release with release notes.
 > - **Inno Setup Macro Standard**: `installer.iss` defines `MyAppVersion` within `#ifndef MyAppVersion` so CI CLI arguments override the version dynamically.
-> - **Strict Prohibition on Extra Assets**: NEVER publish standalone portable executables (`.exe`), unpackaged binaries (such as `releases/win-x64/ScreenHealthGuardian.exe`), or compressed archives (`.zip`) as GitHub Release assets. Production binaries compiled during `dotnet publish` exist strictly to be packaged into the Setup installer by Inno Setup, never as independent release downloads.
-> - **Verification Gate**: Any release workflow or release agent (`ami-release-manager`) must verify with `gh release view <tag> --json assets` that only the Setup installer executable and its `.sha256` hash are uploaded. Releases without the Setup executable or containing portable/zip files are strictly non-compliant.
+> - **Strict Prohibition on Extra Assets**: NEVER publish standalone portable executables (`.exe`), unpackaged binaries (such as `releases/win-x64/ScreenHealthGuardian.exe`), compressed archives (`.zip`), or auxiliary checksum files (`.sha256`) as GitHub Release assets. Production binaries compiled during `dotnet publish` exist strictly to be packaged into the Setup installer by Inno Setup, never as independent release downloads.
+> - **Verification Gate**: Any release workflow or release agent (`ami-release-manager`) must verify with `gh release view <tag> --json assets` that exactly 1 asset exists: `ScreenHealthGuardian-Setup.exe`. Releases without the Setup executable or containing portable/zip/checksum files are strictly non-compliant.
 
 ---
 
